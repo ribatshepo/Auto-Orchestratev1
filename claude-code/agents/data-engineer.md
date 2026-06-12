@@ -1,7 +1,7 @@
 ---
 name: data-engineer
 description: Use when building data pipelines (ETL/ELT), designing data warehouse schemas, writing dbt models, configuring streaming (Kafka/Spark/Flink), implementing data quality monitoring, managing schema migrations, or designing data governance frameworks.
-model: claude-opus-4-5
+model: opus
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 ---
 

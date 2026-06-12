@@ -2,7 +2,7 @@
 
 ## Overview
 
-12 specialized agent types (18 total including pipeline-specific agents) mapping to organizational roles from Individual Contributor (L3) through C-suite (L9). Each agent has a defined scope, model assignment, tool access, and process ownership.
+22 agents (per `claude-code/manifest.json`, the single source of truth): 16 role-based agents mapping to organizational roles from Individual Contributor (L3) through C-suite (L9), the pipeline `orchestrator`, and 5 pipeline/continuity agents (the `continuity-scout` consolidator plus the 4 source-category scouts `scout-jsonl`, `scout-sessions`, `scout-pipeline`, `scout-context`). Each agent has a defined scope, model assignment, tool access, and process ownership.
 
 ## Agent Index
 

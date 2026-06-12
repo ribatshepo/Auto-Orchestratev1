@@ -1,7 +1,7 @@
 ---
 name: technical-writer
 description: Use when writing API documentation, developer guides, runbooks, release notes, SDK samples, architecture documentation, or internal knowledge base content. Documentation-first perspective — maintain, don't duplicate.
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Write, Edit, Glob, Grep
 ---
 

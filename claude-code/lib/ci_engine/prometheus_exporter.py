@@ -11,7 +11,9 @@ Graceful degradation: if prometheus-client is not installed, all public
 functions degrade to no-ops and log a warning. No ImportError is raised
 at module load time.
 
-Dependencies: Python >= 3.11 stdlib only (prometheus-client is optional).
+Dependencies: Python >= 3.11. Runtime is stdlib-only; prometheus-client is an
+optional dependency that, when installed, enables the /metrics endpoint (see
+"Graceful degradation" above). No third-party import is required at module load.
 """
 
 from __future__ import annotations

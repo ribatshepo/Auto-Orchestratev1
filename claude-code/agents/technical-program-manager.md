@@ -1,7 +1,7 @@
 ---
 name: technical-program-manager
 description: Use when coordinating cross-team dependencies, maintaining RAID logs, tracking milestones, facilitating PI planning, making go/no-go release decisions, or managing program-level risks. Coordination-first perspective.
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 

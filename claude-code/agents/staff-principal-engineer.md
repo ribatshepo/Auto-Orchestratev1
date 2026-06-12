@@ -1,7 +1,7 @@
 ---
 name: staff-principal-engineer
 description: Use when making cross-team architecture decisions, writing RFCs or ADRs, conducting architecture reviews, defining technical standards, performing dependency analysis, or providing strategic technical direction. Advisory role — returns analysis, not implementation.
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Glob, Grep, Bash, Task
 ---
 

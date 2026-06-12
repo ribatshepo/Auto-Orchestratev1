@@ -21,11 +21,15 @@ import logging
 import os
 import threading
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from lib.ci_engine import knowledge_store_writer
+
+try:  # package context: lib.ci_engine.stage_metrics_collector
+    from .._time import utc_now_iso_us as _utc_now_iso
+except ImportError:  # standalone: lib/ on sys.path, _time is top-level
+    from _time import utc_now_iso_us as _utc_now_iso
 
 logger = logging.getLogger(__name__)
 
@@ -138,9 +142,6 @@ _WEIGHT_ERROR_RATE = 0.3
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _utc_now_iso() -> str:
-    """Return current UTC time as ISO 8601 string with microseconds."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 def _validate_stage_name(stage_name: str) -> None:

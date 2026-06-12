@@ -6,13 +6,7 @@ description: |
   runtime errors, Docker failures, test failures, build errors, and
   configuration issues. May spawn a researcher subagent for unknown errors.
 model: sonnet
-tools:
-  - Read
-  - Grep
-  - Glob
-  - Bash
-  - Write
-  - Edit
+tools: Read, Grep, Glob, Bash, Write, Edit
 dispatch_triggers:
   - "auto-debug"
   - "triage-error"

@@ -1,7 +1,7 @@
 ---
 name: ml-engineer
 description: Use when building ML pipelines, implementing model training infrastructure, setting up feature stores, configuring model serving (TorchServe/Triton/BentoML), implementing experiment tracking (MLflow/W&B), or monitoring model drift.
-model: claude-opus-4-5
+model: opus
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 ---
 

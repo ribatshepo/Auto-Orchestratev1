@@ -13,9 +13,13 @@ import fcntl
 import json
 import logging
 import os
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+try:  # package context: lib.domain_memory.store
+    from .._time import utc_now_iso_us as _utc_now_iso
+except ImportError:  # standalone: lib/ on sys.path, _time is top-level
+    from _time import utc_now_iso_us as _utc_now_iso
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +42,6 @@ _LOCK_TIMEOUT_SECONDS = 5
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 def _validate_store_name(name: str) -> None:

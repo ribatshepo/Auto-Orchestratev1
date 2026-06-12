@@ -1,7 +1,7 @@
 ---
 name: infra-engineer
 description: Use when building CI/CD pipelines, creating golden path templates, implementing IaC modules, configuring container orchestration, building developer portal integrations, automating releases, improving developer experience, provisioning cloud infrastructure, writing Terraform/CDK/Bicep/Pulumi modules, designing multi-cloud architectures, optimizing cloud costs (FinOps), managing IAM policies, or implementing policy-as-code. BUILDS the platform AND PROVISIONS cloud infrastructure — does NOT operate production (that is SRE).
-model: claude-opus-4-5
+model: opus
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 ---
 

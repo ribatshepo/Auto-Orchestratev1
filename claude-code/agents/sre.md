@@ -1,7 +1,7 @@
 ---
 name: sre
 description: Use when defining SLOs, tracking error budgets, responding to incidents, writing post-mortems, reducing toil, configuring observability (OpenTelemetry, Grafana, Datadog), or setting up alerting. OPERATES production systems — does NOT build the platform or provision cloud infrastructure (that is infra-engineer).
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Write, Bash, Glob, Grep, Task
 ---
 

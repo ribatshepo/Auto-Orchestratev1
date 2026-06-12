@@ -17,9 +17,13 @@ import os
 import re
 import threading
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+try:  # package context: lib.ci_engine.improvement_recommender
+    from .._time import utc_now_iso as _utc_now_iso
+except ImportError:  # standalone: lib/ on sys.path, _time is top-level
+    from _time import utc_now_iso as _utc_now_iso
 
 logger = logging.getLogger(__name__)
 
@@ -109,10 +113,6 @@ _write_lock = threading.Lock()
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
-
-def _utc_now_iso() -> str:
-    """Return current UTC time as ISO 8601 string with Z suffix."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _clamp(value: float, lo: float, hi: float) -> float:

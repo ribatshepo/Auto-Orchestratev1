@@ -5,13 +5,13 @@
   "updated_at": "2026-05-16",
   "stats": {
     "total_skills": 49,
-    "total_agents": 18,
+    "total_agents": 22,
     "total_commands": 1,
     "total_protocols": 12,
     "total_templates": 2,
     "total_style_guides": 1,
     "total_processes": 28,
-    "total_references": 6,
+    "total_references": 7,
     "total_tokens": 1,
     "total_schemas": 1,
     "total_lib_libraries": 3,
@@ -73,6 +73,7 @@
       "model": "sonnet",
       "tools": [
         "Read",
+        "Write",
         "Glob",
         "Grep",
         "Bash",
@@ -314,9 +315,10 @@
     {
       "name": "auditor",
       "description": "Audits codebase against a specification, identifies compliance gaps, produces gap-report.json for orchestrator remediation. Spawned by /auto-orchestrate during Phase 5v (Validation+Audit) per AUTO-001 phase mapping.",
-      "model": "claude-opus-4-5",
+      "model": "opus",
       "tools": [
         "Read",
+        "Write",
         "Glob",
         "Grep",
         "Bash"
@@ -349,7 +351,7 @@
     {
       "name": "infra-engineer",
       "description": "Use when building CI/CD pipelines, creating golden path templates, implementing IaC modules, configuring container orchestration, provisioning cloud infrastructure, writing Terraform/CDK/Bicep/Pulumi modules, designing multi-cloud architectures, optimizing cloud costs (FinOps), managing IAM policies, or implementing policy-as-code. BUILDS the platform AND PROVISIONS cloud infrastructure — does NOT operate production (that is SRE).",
-      "model": "claude-opus-4-5",
+      "model": "opus",
       "tools": [
         "Read",
         "Write",
@@ -435,7 +437,7 @@
     {
       "name": "data-engineer",
       "description": "Use when building data pipelines (ETL/ELT), designing data warehouse schemas, writing dbt models, configuring streaming (Kafka/Spark/Flink), implementing data quality monitoring, managing schema migrations, or designing data governance frameworks.",
-      "model": "claude-opus-4-5",
+      "model": "opus",
       "tools": [
         "Read",
         "Write",
@@ -504,9 +506,10 @@
     {
       "name": "engineering-manager",
       "description": "Use when planning sprints, tracking team health, reviewing DORA metrics, capacity planning, OKR planning, headcount planning, writing performance reviews, or removing impediments. People-first management perspective.",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
+        "Write",
         "Glob",
         "Grep",
         "Bash"
@@ -543,7 +546,7 @@
     {
       "name": "ml-engineer",
       "description": "Use when building ML pipelines, implementing model training infrastructure, setting up feature stores, configuring model serving (TorchServe/Triton/BentoML), implementing experiment tracking (MLflow/W&B), or monitoring model drift.",
-      "model": "claude-opus-4-5",
+      "model": "opus",
       "tools": [
         "Read",
         "Write",
@@ -602,7 +605,7 @@
     {
       "name": "product-manager",
       "description": "Use when writing user stories, managing product backlogs, defining acceptance criteria, planning OKR key results, creating roadmaps, facilitating sprint ceremonies, or prioritizing features. Outcomes-over-outputs orientation.",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
         "Write",
@@ -644,7 +647,7 @@
     {
       "name": "qa-engineer",
       "description": "Use when designing test architectures, writing automated test frameworks, running regression tests, analyzing test coverage gaps, performing load/performance testing, validating acceptance criteria, or enforcing definition of done.",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
         "Write",
@@ -734,9 +737,10 @@
     {
       "name": "security-engineer",
       "description": "Use when performing security reviews, running SAST/DAST analysis, conducting threat modeling, triaging CVEs, assessing compliance (SOC2/ISO27001/GDPR), analyzing incidents, or reviewing IAM policies. Read-only security analysis — evidence-based findings only.",
-      "model": "claude-opus-4-5",
+      "model": "opus",
       "tools": [
         "Read",
+        "Write",
         "Bash",
         "Glob",
         "Grep"
@@ -804,7 +808,7 @@
     {
       "name": "software-engineer",
       "description": "Use when implementing features, writing production code, debugging, running unit tests, performing code reviews, or doing technical design within a single team's scope. Handles L3-L5 IC work and Tech Lead responsibilities.",
-      "model": "claude-opus-4-5",
+      "model": "opus",
       "tools": [
         "Read",
         "Write",
@@ -840,9 +844,10 @@
     {
       "name": "sre",
       "description": "Use when defining SLOs, tracking error budgets, responding to incidents, writing post-mortems, reducing toil, configuring observability (OpenTelemetry, Grafana, Datadog), or setting up alerting. OPERATES production systems — does NOT build the platform or provision cloud infrastructure (that is infra-engineer).",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
+        "Write",
         "Bash",
         "Glob",
         "Grep",
@@ -909,7 +914,7 @@
     {
       "name": "staff-principal-engineer",
       "description": "Use when making cross-team architecture decisions, writing RFCs or ADRs, conducting architecture reviews, defining technical standards, performing dependency analysis, or providing strategic technical direction. Advisory role — returns analysis, not implementation.",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
         "Glob",
@@ -944,7 +949,7 @@
     {
       "name": "technical-program-manager",
       "description": "Use when coordinating cross-team dependencies, maintaining RAID logs, tracking milestones, facilitating PI planning, making go/no-go release decisions, or managing program-level risks. Coordination-first perspective.",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
         "Write",
@@ -984,7 +989,7 @@
     {
       "name": "technical-writer",
       "description": "Use when writing API documentation, developer guides, runbooks, release notes, SDK samples, architecture documentation, or internal knowledge base content. Documentation-first perspective — maintain, don't duplicate.",
-      "model": "claude-sonnet-4-5",
+      "model": "sonnet",
       "tools": [
         "Read",
         "Write",
@@ -2249,6 +2254,16 @@
       {
         "name": "workflow-patterns",
         "path": "_shared/references/workflow-patterns.md"
+      },
+      {
+        "name": "TOOL-AVAILABILITY",
+        "description": "Canonical tool-availability matrix for Claude Code agents, the GAP-CRIT-001 Task-tool caveat, and the file-based task-proposal workaround.",
+        "path": "_shared/references/TOOL-AVAILABILITY.md"
+      },
+      {
+        "name": "CONSTRAINTS-REGISTRY",
+        "description": "Generated index of all PREFIX-NNN constraint/gate/artifact identifier families and the file where each is primarily documented.",
+        "path": "_shared/references/CONSTRAINTS-REGISTRY.md"
       }
     ],
     "python_library": {

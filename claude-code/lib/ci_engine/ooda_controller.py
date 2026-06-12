@@ -24,11 +24,15 @@ import os
 import threading
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from lib.ci_engine.root_cause_classifier import classify_failure
+
+try:  # package context: lib.ci_engine.ooda_controller
+    from .._time import utc_now_iso as _utc_now_iso, utc_now_iso_ms as _utc_now_iso_ms
+except ImportError:  # standalone: lib/ on sys.path, _time is top-level
+    from _time import utc_now_iso as _utc_now_iso, utc_now_iso_ms as _utc_now_iso_ms
 
 logger = logging.getLogger(__name__)
 
@@ -100,16 +104,6 @@ class ActionResult:
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
-
-def _utc_now_iso() -> str:
-    """Return current UTC time as ISO 8601 string with Z suffix."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _utc_now_iso_ms() -> str:
-    """Return current UTC time as ISO 8601 string with milliseconds."""
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-
 
 def _load_json_safe(path: Path) -> dict[str, Any] | None:
     """Load a JSON file, returning None if the file does not exist or is invalid."""

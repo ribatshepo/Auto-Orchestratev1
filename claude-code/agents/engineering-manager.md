@@ -1,7 +1,7 @@
 ---
 name: engineering-manager
 description: Use when planning sprints, tracking team health, reviewing DORA metrics, capacity planning, OKR planning, headcount planning, writing performance reviews, or removing impediments. People-first management perspective.
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Write, Glob, Grep, Bash
 ---
 

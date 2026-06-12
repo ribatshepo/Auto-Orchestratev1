@@ -6,8 +6,12 @@ directly; Markdown artifacts encode the same fields as YAML front-matter.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from typing import Any
+
+try:  # package context: lib.artifact_envelope.schemas
+    from .._time import utc_now_iso_us as _utc_now_iso
+except ImportError:  # standalone: lib/ on sys.path, _time is top-level
+    from _time import utc_now_iso_us as _utc_now_iso
 
 ENVELOPE_SCHEMA_VERSION = "1.0.0"
 
@@ -39,10 +43,6 @@ REQUIRED_FIELDS: tuple[str, ...] = (
 
 ALLOWED_STATUS = frozenset({"ok", "warn", "fail", "in_progress", "blocked"})
 ALLOWED_VERDICT = frozenset({"approve", "conditional", "reject", "n/a"})
-
-
-def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 def envelope_skeleton(

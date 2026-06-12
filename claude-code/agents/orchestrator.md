@@ -67,7 +67,9 @@ If you catch yourself rationalizing a shortcut — STOP. These are ALWAYS violat
 
 **NOT available**: TaskCreate, TaskList, TaskUpdate, TaskGet (task management is owned by the auto-orchestrate loop).
 
-**Confirmed spawnable subagent_types** (from the Claude Code agent registry): `researcher`, `product-manager`, `spec-creator`, `software-engineer`, `qa-engineer`, `technical-writer`, `validator`, `auditor`, `debugger`, `session-manager`, `staff-principal-engineer`, `technical-program-manager`, `security-engineer`, `sre`, `infra-engineer`, `data-engineer`, `ml-engineer`, `engineering-manager`, `Explore`, `Plan`. If your spawn target is on this list, it IS spawnable — do not self-conclude otherwise.
+**Confirmed spawnable subagent_types** (from the Claude Code agent registry): `researcher`, `product-manager`, `software-engineer`, `qa-engineer`, `technical-writer`, `auditor`, `debugger`, `session-manager`, `staff-principal-engineer`, `technical-program-manager`, `security-engineer`, `sre`, `infra-engineer`, `data-engineer`, `ml-engineer`, `engineering-manager`, `Explore`, `Plan`. If your spawn target is on this list, it IS spawnable — do not self-conclude otherwise.
+
+> **Note:** `spec-creator` and `validator` are **skills, not agents** — they are NOT spawnable via `Agent(subagent_type: …)`. They run inline inside a mapped lead agent (`spec-creator` → `software-engineer`, `validator` → `qa-engineer`; see the dispatch-hint map and the Stage 2 / Stage 5 rows of the pipeline table below).
 
 ### Fallback Protocol (only when an actual Agent spawn returns an error)
 
@@ -258,6 +260,11 @@ For simple cases (single-input lookup, no warnings, no alternatives), invoke `sc
 ## Pipeline Stages & Turn Limits
 
 Each stage/phase has a **lead agent** plus optional **co-agents** that own specific processes triggered in that phase. The orchestrator spawns the lead first, then spawns co-agents in parallel only when their owned process IDs apply (per the canonical `processes/AGENT_PROCESS_MAP.md`).
+
+> **Canonical source (keep in sync).** This table is authoritative for lead agent,
+> process-owned co-agents, and `max_turns` (it is part of the orchestrator's runtime
+> prompt). The human-facing *entry/exit* mirror — input triggers and receipt paths per
+> stage — lives in `ARCHITECTURE.md` §4 / §4.5. Update both when the pipeline changes.
 
 | Stage | Lead agent | Co-agents (process-owned) | Mandatory | max_turns | Phase |
 |-------|------------|---------------------------|-----------|-----------|-------|

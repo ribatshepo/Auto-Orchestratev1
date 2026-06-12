@@ -1,7 +1,7 @@
 ---
 name: qa-engineer
 description: Use when designing test architectures, writing automated test frameworks, running regression tests, analyzing test coverage gaps, performing load/performance testing, validating acceptance criteria, or enforcing definition of done.
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Write, Bash, Glob, Grep, Task
 ---
 

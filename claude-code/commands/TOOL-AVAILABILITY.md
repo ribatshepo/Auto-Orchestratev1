@@ -1,5 +1,12 @@
 # Tool Availability Reference
 
+> **Canonical source:** `_shared/references/TOOL-AVAILABILITY.md` holds the full
+> tool-availability matrix, the **GAP-CRIT-001** Task-tool caveat, the file-based
+> task-proposal workaround, and agent-design implications. This file covers only
+> the command-vs-subagent execution-context summary below; read the canonical
+> file for anything beyond it. (`agents/TOOL-AVAILABILITY.md` is a redirect to the
+> same canonical source.)
+
 ## Command Execution Context (Primary Session)
 
 Commands (`auto-orchestrate`, `auto-debug`, `auto-audit`) run in the primary Claude Code session.

@@ -1,7 +1,7 @@
 ---
 name: product-manager
 description: Use when writing user stories, managing product backlogs, defining acceptance criteria, planning OKR key results, creating roadmaps, facilitating sprint ceremonies, or prioritizing features. Outcomes-over-outputs orientation.
-model: claude-sonnet-4-5
+model: sonnet
 tools: Read, Write, Edit, Glob, Grep
 ---
 

@@ -225,6 +225,13 @@ All sub-routines append to `raid-log.json` per RAID-001. Output: `phase-receipts
 
 ### 4.5 Summary table — Stage / Phase entry & exit
 
+> **Canonical sources (keep in sync).** This table is the human-facing *entry/exit*
+> view (input triggers + receipt paths). The **operative** dispatch parameters — lead
+> agent, process-owned co-agents, and `max_turns` — are owned by the orchestrator's own
+> table at `agents/orchestrator.md` § "Pipeline Stages & Turn Limits" (that copy is part
+> of the orchestrator's runtime prompt and is authoritative for lead/co-agents/max_turns).
+> Update both when the pipeline changes.
+
 | Stage / Phase | Lead Agent                                                  | Input Trigger                                        | Receipt Path                                            | Mandatory?                             | Max Turns           |
 | ------------- | ----------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------- | -------------------------------------- | ------------------- |
 | 0a            | researcher                                                  | P4 gate approval                                     | `stage-0/stage-receipt.json`                          | Mandatory                              | 20                  |

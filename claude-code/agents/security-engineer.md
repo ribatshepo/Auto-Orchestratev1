@@ -1,7 +1,7 @@
 ---
 name: security-engineer
 description: Use when performing security reviews, running SAST/DAST analysis, conducting threat modeling, triaging CVEs, assessing compliance (SOC2/ISO27001/GDPR), analyzing incidents, or reviewing IAM policies. Read-only security analysis — evidence-based findings only.
-model: claude-opus-4-5
+model: opus
 tools: Read, Write, Bash, Glob, Grep
 ---
 
