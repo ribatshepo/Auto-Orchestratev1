@@ -108,21 +108,34 @@ Task descriptions: 2-5 sentences of high-level intent — NOT code, NOT step-by-
 
 All output files: `YYYY-MM-DD_<descriptor>.<ext>`.
 
-**MANIFEST.jsonl append protocol (ART-ROOT-002):** After EACH artifact write throughout the session — by the orchestrator OR any spawned agent — the orchestrator MUST append one JSONL line to `.orchestrate/${SESSION_ID}/MANIFEST.jsonl`. Each line records what was written:
+**MANIFEST.jsonl append protocol (ART-ROOT-002):** After EACH artifact write throughout the session — by the orchestrator OR any spawned agent — the orchestrator MUST append one JSONL line to `.orchestrate/${SESSION_ID}/MANIFEST.jsonl`. Each line records what was written. When `checkpoint.optimizations.artifact_excerpt == true` (CONTEXT-DIET-001), the line is also enriched with `artifact_type`, `status`, `excerpt`, and `excerpt_pointers` read straight from the artifact's envelope (no recomputation of the body), turning `MANIFEST.jsonl` into a **discovery index** a consumer can scan once instead of opening every artifact:
 
 ```bash
-python3 -c "import json,hashlib,sys,pathlib,os,datetime as d
+python3 -c "import json,hashlib,sys,pathlib,datetime as d
 p=pathlib.Path(sys.argv[1])
-print(json.dumps({
+line={
     'artifact_path': str(p),
     'owner': sys.argv[2],
     'produced_at': d.datetime.now(d.timezone.utc).isoformat(timespec='seconds').replace('+00:00','Z'),
     'sha256': hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None,
-    'role': sys.argv[3]
-}))" "<artifact_path>" "<owner_agent>" "primary|supplementary" >> ".orchestrate/${SESSION_ID}/MANIFEST.jsonl"
+    'role': sys.argv[3],
+}
+# CONTEXT-DIET-001 enrichment (additive; only when the flag is on and the file is a JSON envelope).
+if sys.argv[4]=='true' and p.suffix=='.json' and p.exists():
+    try:
+        env=json.loads(p.read_text())
+        line.update({
+            'artifact_type': env.get('artifact_type',''),
+            'status': env.get('status',''),
+            'excerpt': (env.get('excerpt') or '')[:600],
+            'excerpt_pointers': env.get('excerpt_pointers',[]),
+        })
+    except Exception:
+        pass  # non-envelope or unparseable -> legacy 5-field line, still valid
+print(json.dumps(line))" "<artifact_path>" "<owner_agent>" "primary|supplementary" "${ARTIFACT_EXCERPT:-false}" >> ".orchestrate/${SESSION_ID}/MANIFEST.jsonl"
 ```
 
-Failure to append is a soft warning (`[MANIFEST-APPEND-WARN]`), not a halt. The completeness checker enforces existence of `MANIFEST.jsonl` (ART-ROOT-002, `cardinality: one`) but downstream consumers expect one line per artifact.
+The enrichment is **append-only and backward-compatible**: legacy lines (flag off, or non-envelope files like `src/auth.py`) simply omit the four extra fields, and consumers read them with `.get(field, "")`. Failure to append is a soft warning (`[MANIFEST-APPEND-WARN]`), not a halt. The completeness checker enforces existence of `MANIFEST.jsonl` (ART-ROOT-002, `cardinality: one`) but downstream consumers expect one line per artifact.
 
 **Step -0.5 (PYTHONPATH PROVISION + CI ENGINE PROBE):** PYTHONPATH and all five lib-import probes MUST run as **one Bash tool call** so the `export` survives. Each Bash invocation gets a fresh shell — env vars do NOT persist across separate Bash calls. (Defect 19 fix; replaces the earlier Step -0.5a + Step -0.5 split which exported PYTHONPATH in one call and ran imports in subsequent calls, where they always failed silently.)
 
@@ -203,6 +216,8 @@ PY
 
 Every downstream agent spawn MUST include the path to the canonical brief in its preamble (see `_shared/protocols/agent-preamble.md` — PREAMBLE-001..004). Downstream agents never read the part files directly — they only see the canonical brief.
 
+When `checkpoint.optimizations.continuity_brief_tiered == true` (CONTINUITY-TIER-001), the spawn context block also carries a `CONTINUITY_SLICE: <stage|phase> + <domain_flags>` hint (the orchestrator already knows the target agent's stage/phase and the checkpoint `process_scope.domain_flags`) so the preamble's tiered read selects the right Slice Index rows deterministically. This is one extra context line, mirroring how `MANIFEST_INJECTION` and `RESEARCH_DEPTH` are already passed.
+
 **Step -0.15 (META-REASONER PROBE, REASONER-001):** Confirm `claude-code/skills/meta-reasoner/SKILL.md` is on disk. Set `HAS_META_REASONER = True` if present. Fire the skill at the five canonical hook sites:
 
 | Hook | Trigger |
@@ -227,11 +242,22 @@ For simple cases (single-input lookup, no warnings, no alternatives), invoke `sc
 - `codebase_analysis.jsonl` — Per-file risk and analysis cache (query before Stage 5)
 - `user_preferences.jsonl` — User corrections and preferences (query at all stages)
 
-**Reading domain memory:** Before each stage, query the relevant store for prior knowledge:
-- Before Stage 0: `search("research_ledger", "<task_topic>")` — if prior research exists, include summary in researcher prompt
-- Before Stage 1: `query_latest("decision_log", 5)` — show recent decisions for context
-- Before Stage 3: `get_patterns("<domain>")` — inject known patterns into software-engineer prompt
-- During OODA: `lookup_fix("<error_fingerprint>")` — if known fix exists, suggest it in enhanced_prompt
+**Reading domain memory (DOMAIN-QUERY-001):** Query the SQLite FTS index via the single agent-facing
+entry point `DomainIndexer.query(store, text, limit)` — it returns ≤`limit` ranked rows (a few hundred
+tokens) instead of the whole `*.jsonl` ledger (which grows unboundedly across sessions). The index is a
+**rebuildable derived artifact**: call `rebuild_index()` once at boot (Step -0.5, after the lib probe)
+so the DB exists before stage queries. On any query exception or missing DB, **fall back to reading the
+JSONL store directly** — slower, but no knowledge is ever lost.
+
+```python
+from lib.domain_memory import DomainMemoryStore, DomainIndexer
+idx = DomainIndexer(DomainMemoryStore(domain_dir, session_id, command)); idx.rebuild_index()
+```
+
+- Before Stage 0: `idx.query("research_ledger", "<task_topic>")` — include any prior research summary in the researcher prompt
+- Before Stage 1: `idx.query("decision_log", "<scope>")` — recent decisions for context
+- Before Stage 3: `idx.query("pattern_library", "<domain>")` — inject known patterns into the software-engineer prompt
+- During OODA: `idx.query("fix_registry", "<error_fingerprint>")` — if a known fix exists, suggest it in the enhanced_prompt
 
 **Writing domain memory:** After each stage completes, persist learned knowledge:
 - After Stage 0: Append key findings to `research_ledger`

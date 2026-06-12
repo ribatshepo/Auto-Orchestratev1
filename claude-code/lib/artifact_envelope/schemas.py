@@ -44,6 +44,11 @@ REQUIRED_FIELDS: tuple[str, ...] = (
 ALLOWED_STATUS = frozenset({"ok", "warn", "fail", "in_progress", "blocked"})
 ALLOWED_VERDICT = frozenset({"approve", "conditional", "reject", "n/a"})
 
+# CONTEXT-DIET-001: a bounded one-paragraph summary stored alongside (never instead of)
+# the full body, so downstream agents can read a digest first and deep-read the body only
+# when needed. The full body is never truncated; only this summary copy is length-capped.
+EXCERPT_MAX_CHARS = 600  # ~150 tokens
+
 
 def envelope_skeleton(
     artifact_type: str,
@@ -80,6 +85,8 @@ def envelope_skeleton(
             "related_meetings": [],
             "related_processes": [],
         },
+        "excerpt": "",
+        "excerpt_pointers": [],
         "body": {},
     }
 
@@ -98,8 +105,17 @@ def build_envelope(
     outputs: list[dict[str, Any]] | None = None,
     confidence: dict[str, Any] | None = None,
     links: dict[str, list[Any]] | None = None,
+    excerpt: str | None = None,
+    excerpt_pointers: list[str] | None = None,
 ) -> dict[str, Any]:
-    """Build a complete envelope dict ready to serialize."""
+    """Build a complete envelope dict ready to serialize.
+
+    ``excerpt`` is an optional bounded one-paragraph digest (CONTEXT-DIET-001),
+    defensively truncated to ``EXCERPT_MAX_CHARS`` so it can never bloat the
+    MANIFEST index. ``excerpt_pointers`` names the body sections a reader should
+    deep-read for detail (e.g. ``["body.gaps[]", "body.compliance_score"]``).
+    Both are additive and optional; the full ``body`` is stored untouched.
+    """
     if verdict not in ALLOWED_VERDICT:
         raise ValueError(
             f"Invalid verdict '{verdict}'. Allowed: {sorted(ALLOWED_VERDICT)}"
@@ -115,6 +131,8 @@ def build_envelope(
     env["verdict"] = verdict
     env["inputs"] = inputs or []
     env["outputs"] = outputs or []
+    env["excerpt"] = (excerpt or "")[:EXCERPT_MAX_CHARS]
+    env["excerpt_pointers"] = excerpt_pointers or []
     env["body"] = body
     if confidence is not None:
         env["confidence"] = confidence

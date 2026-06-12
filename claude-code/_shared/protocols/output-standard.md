@@ -286,3 +286,27 @@ The `gap-report.json` file (used by `.orchestrate/audit/` and `.orchestrate/stag
 | **CHECKPOINT-001** | Atomic write: tmp → rename. Recovery on startup. |
 | **STRUCTURE-001** | All commands use subdirectories for phases/stages |
 | **DOMAIN-BRIDGE** | Stage receipts are the standard input for domain memory hooks |
+| **CONTEXT-DIET-001** | Read `MANIFEST.jsonl` + envelope `excerpt` first; deep-read a full body only when the task needs detail |
+
+## 8. Context Diet (CONTEXT-DIET-001)
+
+**Digest-by-default, deep-read-on-demand.** No artifact is ever deleted or stripped — every full
+body stays byte-identical on disk and is always readable. This rule only changes the *default*
+reading path so an agent loads a digest instead of every full artifact.
+
+When `checkpoint.optimizations.artifact_excerpt == true`, any agent that needs prior-artifact context MUST:
+
+1. **Read `.orchestrate/<sid>/MANIFEST.jsonl` once** — the discovery index. Each enriched line carries
+   `artifact_path`, `artifact_type`, `status`, `excerpt` (≤600 chars), and `excerpt_pointers`.
+2. **Filter** lines by `artifact_type` / `status` / stage relevant to the task and read each candidate's
+   `excerpt` to understand it.
+3. **Deep-read the full body with `Read` ONLY** when the task needs detail the excerpt does not carry,
+   using `excerpt_pointers` (e.g. `["body.gaps[]"]`) to target the relevant section.
+4. **Log** `[CONTEXT-DIET-001] deep-read <path> (reason: <field needed>)` on each full-body read for
+   retro attribution.
+
+**Producers** populate `envelope.excerpt` + `excerpt_pointers` via `build_envelope(...)` (a bounded
+one-paragraph summary + body-section pointers). **Fallback:** when a MANIFEST line lacks `excerpt`
+(legacy session, flag off, or a non-envelope file), agents read full bodies as before — strictly
+today's behavior, zero regression. See also DOMAIN-QUERY-001 (query the domain-memory FTS index
+instead of scanning whole JSONL ledgers).

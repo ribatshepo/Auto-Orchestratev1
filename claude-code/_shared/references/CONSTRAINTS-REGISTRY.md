@@ -7,7 +7,7 @@
 > defining file — edit there, then regenerate this index. Grouped by primary file;
 > within a group, families are listed by descending occurrence count.
 
-**Coverage:** 142 identifier families · 435 distinct IDs · plus the 93-entry `P-NNN` process catalog (see below).
+**Coverage:** 146 identifier families · 439 distinct IDs · plus the 93-entry `P-NNN` process catalog (see below).
 
 ## Process catalog (`P-001`–`P-093`)
 
@@ -30,6 +30,7 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 | `AGENT-ACTIVATE-NNN` | 5 | 001–005 | 23 |
 | `ART-S4-NNN` | 3 | 001–003 | 9 |
 | `PLAN-ROUTE-NNN` | 5 | 001–005 | 6 |
+| `DOMAIN-QUERY-NNN` | 1 | 001 | 5 |
 | `SKILL-FRONTMATTER-NNN` | 1 | 001 | 5 |
 | `SFI-NNN` | 1 | 001 | 3 |
 | `TAXONOMY-NNN` | 1 | 001 | 2 |
@@ -38,7 +39,7 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 
 | Family | Distinct IDs | ID numbers | Occurrences |
 |--------|-------------:|------------|------------:|
-| `CONT-NNN` | 9 | 001–009 | 94 |
+| `CONT-NNN` | 9 | 001–009 | 97 |
 | `PARALLEL-NNN` | 3 | 001–003 | 64 |
 | `FANOUT-NNN` | 1 | 001 | 62 |
 | `HUMAN-GATE-NNN` | 1 | 001 | 54 |
@@ -73,6 +74,7 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 | `TASK-CREATION-FANOUT-NNN` | 1 | 001 | 11 |
 | `TASK-ARG-NNN` | 1 | 001 | 10 |
 | `PER-STORY-RESEARCH-NNN` | 1 | 001 | 9 |
+| `PROTOCOL-PACK-SLIM-NNN` | 1 | 001 | 9 |
 | `REGRESS-NNN` | 3 | 001–003 | 9 |
 | `ART-S5-NNN` | 4 | 001–004 | 8 |
 | `ART-S2-NNN` | 3 | 002–004 | 7 |
@@ -112,12 +114,6 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 | `DISPATCH-GUARD-NNN` | 1 | 001 | 2 |
 | `TRIG-NNN` | 2 | 001, 013 | 2 |
 
-### `_shared/protocols/agent-preamble.md`
-
-| Family | Distinct IDs | ID numbers | Occurrences |
-|--------|-------------:|------------|------------:|
-| `PREAMBLE-NNN` | 4 | 001–004 | 29 |
-
 ### `_shared/protocols/command-dispatch.md`
 
 | Family | Distinct IDs | ID numbers | Occurrences |
@@ -136,7 +132,7 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 
 | Family | Distinct IDs | ID numbers | Occurrences |
 |--------|-------------:|------------|------------:|
-| `ENG-STD-NNN` | 1 | 001 | 49 |
+| `ENG-STD-NNN` | 1 | 001 | 52 |
 
 ### `_shared/protocols/meeting-enforcement.md`
 
@@ -155,8 +151,8 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 | Family | Distinct IDs | ID numbers | Occurrences |
 |--------|-------------:|------------|------------:|
 | `STAGE-RECEIPT-DIET-NNN` | 1 | 001 | 4 |
-| `CHECKPOINT-NNN` | 1 | 001 | 1 |
-| `STRUCTURE-NNN` | 1 | 001 | 1 |
+| `CHECKPOINT-NNN` | 1 | 001 | 2 |
+| `STRUCTURE-NNN` | 1 | 001 | 2 |
 
 ### `_shared/protocols/skill-chain-contracts.md`
 
@@ -164,15 +160,23 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 |--------|-------------:|------------|------------:|
 | `CHAIN-NNN` | 11 | 001–011 | 26 |
 
+### `_shared/protocols/spawn-core.md`
+
+| Family | Distinct IDs | ID numbers | Occurrences |
+|--------|-------------:|------------|------------:|
+| `PREAMBLE-NNN` | 4 | 001–004 | 40 |
+| `OUT-NNN` | 5 | 001–005 | 23 |
+| `CONTEXT-DIET-NNN` | 1 | 001 | 12 |
+| `RECEIPT-NNN` | 1 | 001 | 7 |
+| `NAME-NNN` | 1 | 001 | 4 |
+
 ### `_shared/protocols/subagent-protocol-base.md`
 
 | Family | Distinct IDs | ID numbers | Occurrences |
 |--------|-------------:|------------|------------:|
-| `READ-NNN` | 5 | 001–005 | 20 |
-| `OUT-NNN` | 5 | 001–005 | 13 |
-| `MAN-NNN` | 2 | 001–002 | 10 |
-| `EARLY-NNN` | 3 | 001–003 | 9 |
-| `NAME-NNN` | 1 | 001 | 2 |
+| `READ-NNN` | 5 | 001–005 | 29 |
+| `MAN-NNN` | 2 | 001–002 | 15 |
+| `EARLY-NNN` | 3 | 001–003 | 13 |
 
 ### `_shared/protocols/task-system-integration.md`
 
@@ -193,6 +197,12 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 | Family | Distinct IDs | ID numbers | Occurrences |
 |--------|-------------:|------------|------------:|
 | `AUD-NNN` | 8 | 001–008 | 15 |
+
+### `agents/continuity-scout.md`
+
+| Family | Distinct IDs | ID numbers | Occurrences |
+|--------|-------------:|------------|------------:|
+| `CONTINUITY-TIER-NNN` | 1 | 001 | 23 |
 
 ### `agents/data-engineer.md`
 
@@ -223,7 +233,6 @@ specs (`processes/01_*`–`processes/18_*`); the cross-reference index is
 | Family | Distinct IDs | ID numbers | Occurrences |
 |--------|-------------:|------------|------------:|
 | `RES-NNN` | 14 | 001–014 | 94 |
-| `RECEIPT-NNN` | 1 | 001 | 5 |
 
 ### `agents/security-engineer.md`
 

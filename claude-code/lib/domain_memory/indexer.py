@@ -304,3 +304,40 @@ class DomainIndexer:
             (key,),
         ).fetchone()
         return dict(row) if row else None
+
+    def search_decisions(self, text: str = "", limit: int = 20) -> list[dict]:
+        """Search decision-log entries by decision/rationale substring."""
+        conn = self._get_conn()
+        self._create_tables()
+        rows = conn.execute(
+            "SELECT * FROM decisions WHERE decision LIKE ? OR rationale LIKE ? "
+            "ORDER BY timestamp DESC LIMIT ?",
+            (f"%{text}%", f"%{text}%", limit),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+    # -- Agent-facing dispatcher (DOMAIN-QUERY-001) -------------------------
+
+    def query(self, store: str, text: str = "", limit: int = 10) -> list[dict]:
+        """Single agent-facing entry point: route ``text`` to the typed search
+        for ``store`` and return ≤``limit`` ranked rows (a few hundred tokens)
+        instead of the whole JSONL ledger.
+
+        Maps each of the six ``VALID_STORES`` onto its concrete index method.
+        Unknown stores return ``[]``. Callers should fall back to reading the
+        JSONL source on any exception so no knowledge is ever lost — the index
+        is a rebuildable derived artifact (see ``rebuild_index``).
+        """
+        routes = {
+            "research_ledger": lambda: self.search_research(text, limit),
+            "decision_log": lambda: self.search_decisions(text, limit),
+            "pattern_library": lambda: self.get_patterns(text, limit),
+            "fix_registry": lambda: self.lookup_fix(text),
+            "codebase_analysis": lambda: (
+                [a] if (a := self.get_file_analysis(text)) else []
+            ),
+            "user_preferences": lambda: (
+                [p] if (p := self.get_user_preference(text)) else []
+            ),
+        }
+        return routes.get(store, list)()

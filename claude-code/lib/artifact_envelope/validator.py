@@ -142,6 +142,18 @@ def validate(path: str | Path, expected_type: str | None = None) -> dict[str, An
         raise EnvelopeValidationError(
             f"{p}: invalid verdict '{env['verdict']}'"
         )
+    # CONTEXT-DIET-001: excerpt/excerpt_pointers are optional. Type-check only —
+    # never fail on length (the producer truncates the summary copy; the full
+    # body is never touched, so fidelity is preserved regardless).
+    if "excerpt" in env and not isinstance(env["excerpt"], str):
+        raise EnvelopeValidationError(
+            f"{p}: excerpt must be a string, got {type(env['excerpt']).__name__}"
+        )
+    if "excerpt_pointers" in env and not isinstance(env["excerpt_pointers"], list):
+        raise EnvelopeValidationError(
+            f"{p}: excerpt_pointers must be a list, got "
+            f"{type(env['excerpt_pointers']).__name__}"
+        )
     return env
 
 

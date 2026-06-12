@@ -320,3 +320,37 @@ class TestDomainIndexer:
         indexer.rebuild_index()
         assert indexer.search_research("anything") == []
         indexer.close()
+
+    # -- DOMAIN-QUERY-001 dispatcher --------------------------------------
+
+    def test_query_dispatches_to_research(self, store: DomainMemoryStore) -> None:
+        store.append("research_ledger", {"topic": "JWT auth", "findings": ["x"]})
+        indexer = DomainIndexer(store)
+        indexer.rebuild_index()
+        # query() must return the same rows as the typed method it routes to.
+        assert indexer.query("research_ledger", "JWT") == indexer.search_research("JWT")
+        assert len(indexer.query("research_ledger", "JWT")) == 1
+        indexer.close()
+
+    def test_query_routes_each_store(self, store: DomainMemoryStore) -> None:
+        store.append("decision_log", {"decision": "use postgres", "rationale": "acid"})
+        store.append("fix_registry", {"error_fingerprint": "fp1", "fix_description": "d"})
+        indexer = DomainIndexer(store)
+        indexer.rebuild_index()
+        assert indexer.query("decision_log", "postgres")  # search_decisions path
+        assert indexer.query("fix_registry", "fp1")        # lookup_fix path
+        indexer.close()
+
+    def test_query_unknown_store_returns_empty(self, store: DomainMemoryStore) -> None:
+        indexer = DomainIndexer(store)
+        indexer.rebuild_index()
+        assert indexer.query("nonexistent_store", "x") == []
+        indexer.close()
+
+    def test_query_respects_limit(self, store: DomainMemoryStore) -> None:
+        for i in range(5):
+            store.append("research_ledger", {"topic": f"auth variant {i}", "findings": []})
+        indexer = DomainIndexer(store)
+        indexer.rebuild_index()
+        assert len(indexer.query("research_ledger", "auth", limit=2)) == 2
+        indexer.close()

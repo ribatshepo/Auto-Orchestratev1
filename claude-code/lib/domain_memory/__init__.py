@@ -20,10 +20,12 @@ from .schemas import (
     ResearchEntry,
     UserPreferenceEntry,
 )
+from .indexer import DomainIndexer
 from .store import DomainMemoryStore
 
 __all__ = [
     "DomainMemoryStore",
+    "DomainIndexer",
     "ResearchEntry",
     "DecisionEntry",
     "PatternEntry",

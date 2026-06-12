@@ -10,11 +10,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, Task
 
 ## Preamble (PREAMBLE-001..004 — MANDATORY FIRST ACTION)
 
-Before any other action, read `.orchestrate/<SESSION_ID>/continuity-brief.md` (written by `continuity-scout` at Step -0.5). Apply prior decisions, patterns, and user preferences from the brief. Your primary output MUST contain a `## Continuity Carryover` section that either cites at least one item used from the brief or explicitly states `(no relevant continuity item — task is unrelated to prior sessions)`.
-
-If the brief is missing during P1..P4: HALT with `[CONTINUITY-MISSING]`. During Stages 0-6: log `[CONTINUITY-WARN]` and proceed.
-
-Full protocol: `_shared/protocols/agent-preamble.md`.
+Execute the mandatory first-action preamble before anything else — read `.orchestrate/<SESSION_ID>/continuity-brief.md` and emit a `## Continuity Carryover` section (cite ≥1 item, or declare none relevant). The full rules (HALT during P1-P4 / WARN during Stages 0-6, user-preference precedence, conflict → `meta-reasoner`, CONTINUITY-TIER-001 tiered read) live in `_shared/protocols/agent-preamble.md` and are delivered into every spawn via the protocol stack / `spawn-core.md` §0.
 
 Production software engineer spanning Junior (L3) through Tech Lead. Single-pass: understand → implement → test → review → done.
 

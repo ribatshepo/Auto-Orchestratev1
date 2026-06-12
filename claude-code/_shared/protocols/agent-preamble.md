@@ -15,6 +15,21 @@ If the file does not exist:
 - During P1..P4 planning stages: HALT with `[CONTINUITY-MISSING]` — the scout did not run; escalate to orchestrator.
 - During Stage 0..6: log `[CONTINUITY-WARN] no brief present; proceeding without prior-session context` and continue.
 
+**Tiered read (CONTINUITY-TIER-001).** When `checkpoint.optimizations.continuity_brief_tiered == true`
+AND the brief contains a `## Slice Index`:
+
+1. Read the `## HOT` block (always — `Read` offset/limit on that section).
+2. Read ONLY the slice rows for `{my stage/phase} ∪ {my scope domain_flags}` (the orchestrator passes a
+   `CONTINUITY_SLICE` hint in the spawn context), using the Slice Index line-ranges for targeted reads
+   (READ-003). Skip the rest by default.
+3. **PREAMBLE-002 soundness:** cite from HOT or your slice. If nothing there is relevant, you MUST
+   deep-read the **full** brief once (`Read` the whole file) **before** declaring
+   `(no relevant continuity item …)` — this guarantees scoping never silently drops a citable item.
+
+Else (flag off, or no `## Slice Index` in the brief): read the whole brief — legacy behaviour,
+byte-identical. The full brief is always present on disk and authoritative; a spawn may set
+`needs_full_brief: true` to force the full read.
+
 ## Step 2 — Cite at Least One Item OR Declare None Relevant
 
 Every agent's primary output (stage receipt, planning doc, code artifact, validation report, etc.) MUST include one of:

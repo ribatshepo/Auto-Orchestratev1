@@ -14,6 +14,7 @@ import pytest
 from lib.artifact_envelope import (
     ARTIFACT_TYPES,
     ENVELOPE_SCHEMA_VERSION,
+    EXCERPT_MAX_CHARS,
     EnvelopeValidationError,
     build_envelope,
     envelope_skeleton,
@@ -80,6 +81,69 @@ def test_build_envelope_wraps_body_and_sets_fields():
 def test_build_envelope_rejects_invalid_verdict():
     with pytest.raises(ValueError, match="Invalid verdict"):
         build_envelope("gate", "g", "s", "1", "agent", body={}, verdict="maybe")
+
+
+# --------------------------------------------------------------------------- #
+# CONTEXT-DIET-001: excerpt / excerpt_pointers
+# --------------------------------------------------------------------------- #
+
+def test_skeleton_has_empty_excerpt_fields():
+    env = envelope_skeleton("gate", "g1", "s1", "2", "qa-engineer")
+    assert env["excerpt"] == ""
+    assert env["excerpt_pointers"] == []
+
+
+def test_build_envelope_populates_excerpt_and_pointers():
+    env = build_envelope(
+        "audit_finding", "a1", "s1", "5", "auditor", body={"gaps": []},
+        excerpt="Compliance 82%: 1 FAIL (REQ-009 authz).",
+        excerpt_pointers=["body.gaps[]", "body.compliance_score"],
+    )
+    assert env["excerpt"].startswith("Compliance 82%")
+    assert env["excerpt_pointers"] == ["body.gaps[]", "body.compliance_score"]
+
+
+def test_excerpt_is_truncated_to_max_chars():
+    env = build_envelope(
+        "gate", "g", "s", "1", "agent", body={}, excerpt="x" * 5000
+    )
+    assert len(env["excerpt"]) == EXCERPT_MAX_CHARS
+    # The body is never touched by excerpt truncation.
+    assert env["body"] == {}
+
+
+def test_omitted_excerpt_defaults_empty_and_validates(tmp_path):
+    p = tmp_path / "art.json"
+    p.write_text(json.dumps(_good_envelope()), encoding="utf-8")
+    env = validate(p)
+    assert env["excerpt"] == ""  # default present, validation clean
+
+
+def test_validate_rejects_non_string_excerpt(tmp_path):
+    env = _good_envelope()
+    env["excerpt"] = {"not": "a string"}
+    p = tmp_path / "art.json"
+    p.write_text(json.dumps(env), encoding="utf-8")
+    with pytest.raises(EnvelopeValidationError, match="excerpt must be a string"):
+        validate(p)
+
+
+def test_validate_rejects_non_list_excerpt_pointers(tmp_path):
+    env = _good_envelope()
+    env["excerpt_pointers"] = "body.x"
+    p = tmp_path / "art.json"
+    p.write_text(json.dumps(env), encoding="utf-8")
+    with pytest.raises(EnvelopeValidationError, match="excerpt_pointers must be a list"):
+        validate(p)
+
+
+def test_validate_does_not_fail_on_overlong_excerpt(tmp_path):
+    # Fidelity: an over-long excerpt that somehow reached disk is accepted, not rejected.
+    env = _good_envelope()
+    env["excerpt"] = "y" * 5000
+    p = tmp_path / "art.json"
+    p.write_text(json.dumps(env), encoding="utf-8")
+    assert validate(p)["excerpt"] == "y" * 5000
 
 
 # --------------------------------------------------------------------------- #

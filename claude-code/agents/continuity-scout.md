@@ -31,7 +31,11 @@ Each part validates against `templates/orchestrate-session/schemas/continuity-br
 3. **Conflict resolution (CONT-008).** Collect every `body.conflicts_detected` array from the 4 parts, then scan for cross-part conflicts (e.g., a decision_id in `scout-jsonl` marked superseded but cited as authoritative in `scout-sessions`/learnings; a HIGH audit finding from `scout-pipeline` that contradicts a "resolved" claim in a prior-session learning). If the combined conflict set is non-empty, invoke `meta-reasoner` **once** on the union, write the resulting `.orchestrate/<sid>/reasoning-traces/reasoning-trace-continuity-<TS>.json`, and link it from the canonical brief's `confidence.reasoning_trace`. Scouts themselves are FORBIDDEN from invoking meta-reasoner (CONT-008).
 4. **Sentinel for empty sections (CONT-002).** Any canonical section with zero entries after dedup MUST be written with the explicit literal `- (none relevant to this task)`. Silent omission is a violation.
 5. **Confidence.** Compute `confidence.value = min(scout.confidence_local for present scouts) * (parts_received / 4)`. Caveats include every `[CONTINUITY-PARTIAL]` log line.
-6. **Emit canonical brief** at `.orchestrate/<sid>/continuity-brief.md` with the existing envelope (`artifact_type: continuity_brief`, schema unchanged per CONT-004). Add `links.continuity_parts: [<4 paths>]` so the lineage is auditable.
+6. **Tiering (CONTINUITY-TIER-001 — additive, gated).** When `checkpoint.optimizations.continuity_brief_tiered == true`, build, **over the same merged content** (no entry dropped, CONT-002 sentinels intact), two additive blocks:
+   - a **`## HOT` core** (prepended right after the H1): the cross-cutting items every spawn needs — `## User Preferences` (PREAMBLE-003), `## Confidence`, the `## Open Risks Carried Forward` entries with `severity: HIGH|CRITICAL` only, and `## Recent Session Outcomes` reduced to verdict + one-line lesson per session. Target ≤40 lines. Anything not confidently scopable is also surfaced in HOT (default-include).
+   - a **`## Slice Index`** table (appended just before `## Confidence`): one row per `{stage|scope}` → the line-range / anchor of the sections relevant to it. Tag each merged entry by **stage** (decisions/patterns/conventions → planning + Stage 3; known_fixes → Stage 3/4/5e; baseline_drift → Stage 5/4.5), by **scope** (`checkpoint.process_scope.domain_flags`: infra/data_ml/security/… when an entry references that subsystem), and by **files-touched** (when an entry's source path overlaps the task area). Regenerate the Slice Index whenever the Stage-0 refresh addendum appends content (CONT-009).
+   When the flag is off, skip this step — the brief is byte-identical to today.
+7. **Emit canonical brief** at `.orchestrate/<sid>/continuity-brief.md` with the existing envelope (`artifact_type: continuity_brief`, schema unchanged per CONT-004). Add `links.continuity_parts: [<4 paths>]` so the lineage is auditable. The brief remains ONE file — HOT and Slice Index are an additive index over the same full content, so a legacy/full reader sees a superset and behaves exactly as before.
 
 ## Scout-to-Section Mapping
 
@@ -79,6 +83,13 @@ body: {summary, counts: {decisions, patterns, fixes, risks}}
 
 # Continuity Brief — <NEW_SESSION_ID>
 
+<!-- ## HOT and ## Slice Index are emitted ONLY when continuity_brief_tiered == true (CONTINUITY-TIER-001). -->
+## HOT
+<!-- Cross-cutting, every-spawn-relevant items (≤40 lines): user preferences, confidence, HIGH/CRITICAL risks, one-line recent outcomes. -->
+- Pref: <preference> (source-session: <sid>).
+- Risk(HIGH): <RAID id> — mitigation: <...>.
+- Recent: <sid> verdict <PASS|FAIL> — <one-line lesson>.
+
 ## Prior Decisions Relevant to Task
 - <decision_id> — <one-line summary>. Source: <path>.
 
@@ -100,6 +111,15 @@ body: {summary, counts: {decisions, patterns, fixes, risks}}
 - <preference> (source-session: <sid>).
 
 (Optional `## Improvement Hints` section emitted only when non-empty.)
+
+## Slice Index
+<!-- Emitted only when continuity_brief_tiered == true. stage|scope -> section line-ranges/anchors a spawn should read. -->
+| Slice (stage \| scope) | Sections to read |
+|---|---|
+| planning | Prior Decisions, Codebase Conventions |
+| stage-3 \| <domain_flag> | Reusable Patterns, Known Fixes, Prior Decisions |
+| stage-4/5e | Known Fixes |
+| stage-4.5/5 | Open Risks (baseline_drift) |
 
 ## Confidence
 - value: <0.0-1.0>

@@ -3678,7 +3678,7 @@ If `.orchestrate/<session>/gate-state.json` exists from a prior session in the s
 
 ```json
 {
-  "schema_version": "1.9.0",
+  "schema_version": "1.10.0",
   "session_id": "<session-id>",
   "created_at": "<ISO-8601>",
   "updated_at": "<ISO-8601>",
@@ -3746,7 +3746,10 @@ If `.orchestrate/<session>/gate-state.json` exists from a prior session in the s
     "manifest_digest": true,
     "per_stage_templates": true,
     "stage_receipt_diet": true,
-    "handover_compress": true
+    "handover_compress": true,
+    "artifact_excerpt": true,
+    "protocol_pack_slim": true,
+    "continuity_brief_tiered": true
   },
   "session_token_total": { "input": 0, "output": 0 }
 }
@@ -3882,6 +3885,22 @@ Log: `[MIGRATE] Added stage_receipt_diet + handover_compress (1.8.0 → 1.9.0). 
 
 Update `schema_version` to `"1.9.0"` after migration.
 
+**Context-diet optimization fields migration (1.9.0 → 1.10.0)**: When resuming a session that lacks the context-diet optimization fields, add them. Resumed sessions default these to `false` (legacy verbose behaviour) so prior artifacts, MANIFEST lines, briefs, and spawn prompts on disk stay byte-compatible with their existing readers. New sessions default to `true`:
+
+```json
+{
+  "optimizations": {
+    "artifact_excerpt": false,
+    "protocol_pack_slim": false,
+    "continuity_brief_tiered": false
+  }
+}
+```
+
+Log: `[MIGRATE] Added artifact_excerpt + protocol_pack_slim + continuity_brief_tiered (1.9.0 → 1.10.0). Context-diet/slim-protocol/tiered-brief default OFF on resume; flip true to enable.`
+
+Update `schema_version` to `"1.10.0"` after migration.
+
 **Optimization flag semantics**:
 - `skill_frontmatter_routing` — When true, skill discovery loads SKILL.md YAML frontmatter only (~300 tok); full body loads only at invocation. See SKILL-FRONTMATTER-001 in `_shared/protocols/command-dispatch.md`.
 - `process_injection_slim` — When true, spawn-prompt builder injects only fired hooks (filtered) instead of the full process injection map. See `[INJECT-AUDIT]` log entries in Step 3.
@@ -3889,6 +3908,9 @@ Update `schema_version` to `"1.9.0"` after migration.
 - `per_stage_templates` — When true, orchestrator spawn prompts load `agents/orchestrator.md` core + only the active stage/phase template from `agents/orchestrator/templates/`. When false, builder concatenates all templates back to the legacy verbose format.
 - `stage_receipt_diet` — When true, stage producers write the slim v2.0.0 stage-receipt format (`_shared/protocols/output-standard.md` §4.1). Consumer agents must read both v1 and v2 per §4.3. See STAGE-RECEIPT-DIET-001.
 - `handover_compress` — When true, handover-receipt producers write the slim v2.0.0 format (`_shared/protocols/command-dispatch.md`). Consumers re-derive `context_carry` from checkpoint when v1 callers expect it. See HANDOVER-COMPRESS-001.
+- `artifact_excerpt` — When true, producers populate `envelope.excerpt` (≤600 chars) + `excerpt_pointers`, the orchestrator enriches each `MANIFEST.jsonl` line with `artifact_type`/`status`/`excerpt`, and consumers apply digest-by-default reading (read the index + excerpt first, deep-read a full body only on demand). Full bodies stay byte-identical on disk. See CONTEXT-DIET-001 (`_shared/protocols/output-standard.md` §8) and DOMAIN-QUERY-001.
+- `protocol_pack_slim` — When true, the spawn-prompt builder injects `_shared/protocols/spawn-core.md` (~2k tok: every constraint by ID + a reference index) instead of the full 5-doc protocol stack (~7.5k); code-producing agents at Stage 3 also get the full `engineering-standards.md`. The five source docs stay on disk and are read on demand; a missing core file falls back to the full stack with `[PROTOCOL-PACK-SLIM-001 FAIL]`; a spawn may set `needs_full_protocols: true` to re-fatten. See PROTOCOL-PACK-SLIM-001.
+- `continuity_brief_tiered` — When true, `continuity-scout` emits a `## HOT` core + `## Slice Index` over the *same* canonical `continuity-brief.md`; spawns read HOT + their stage/scope slice by default (targeted offset reads) and deep-read the full brief on demand. PREAMBLE-002 stays sound: an agent must full-read the brief before declaring "no relevant continuity item." A spawn may set `needs_full_brief: true`. See CONTINUITY-TIER-001.
 
 **Token estimation method (Step 4.6)**: Token counts are estimates, not meters. Use:
 - `input_estimate = (chars_in_spawn_prompt + chars_in_agent_md + sum(chars_in_loaded_skill_mds)) // 4`
@@ -4194,6 +4216,37 @@ log(f"[OPT-1-TEMPLATE] flag={'on' if flag_on else 'off'} "
 **Safe fallback**: When `flag_on=True` and the requested section can't be located, the helper returns the full file. This makes it impossible for a missing section to silently strip the orchestrator's instructions.
 
 **Behavioral equivalence**: With flag off, the helper returns byte-equivalent content to today (the unaltered full file). With flag on, only ~8k of CORE + ~300-2k of active template are sent, but every subsection actually needed at the spawn boundary remains present.
+
+### 3d-quater. Protocol-pack selection (PROTOCOL-PACK-SLIM-001)
+
+Applies to **team-agent / subagent** spawns (the per-spawn protocol stack the orchestrator concatenates into each subagent prompt — `subagent-protocol-base.md` + `output-standard.md` + `output-schemas.md` + `engineering-standards.md` + `agent-preamble.md`, ~7.5k tok). When the flag is on, inject the slim CORE pack instead:
+
+```python
+# Pseudocode — same convention as build_digest / build_spawn_prompt_body
+flag_on = checkpoint["optimizations"]["protocol_pack_slim"]
+is_code_agent = target_agent_name in {
+    "software-engineer", "infra-engineer", "ml-engineer",
+    "data-engineer", "qa-engineer", "security-engineer", "sre",
+}
+spawn_core = "~/.claude/_shared/protocols/spawn-core.md"
+
+if not flag_on or task.get("needs_full_protocols"):
+    protocol_payload = concat(BASE, OUTPUT_STD, OUTPUT_SCHEMAS, ENG_STD, PREAMBLE)  # legacy ~7.5k
+    kind = "full"
+elif not path_exists(spawn_core):                       # safe fallback — never strip rules
+    protocol_payload = concat(BASE, OUTPUT_STD, OUTPUT_SCHEMAS, ENG_STD, PREAMBLE)
+    kind = "full"
+    log('[PROTOCOL-PACK-SLIM-001 FAIL] spawn-core.md unloadable — falling back to full protocol stack')
+else:
+    protocol_payload = read_file(spawn_core)            # ~2k tok
+    if is_code_agent and spawning_for_stage == 3:
+        protocol_payload += read_file("~/.claude/_shared/protocols/engineering-standards.md")  # full ENG-STD preserved
+    kind = "slim"
+
+log(f"[OPT-PROTOCOL] target={target_agent_name} kind={kind} tokens≈{len(protocol_payload)//4}")
+```
+
+**Re-fatten on demand**: any spawn that needs the full long-form sets `needs_full_protocols: true`; the builder re-injects the full stack and logs `[PROTOCOL-PACK-SLIM-001 FALLBACK]`. **Safe fallback**: a missing `spawn-core.md` falls back to the full stack (impossible to silently strip a rule). The five source docs are unchanged on disk and read on demand via the spawn-core Reference Index. See PROTOCOL-PACK-SLIM-001 in `_shared/protocols/command-dispatch.md`.
 
 ### 3e. Spawn orchestrator
 

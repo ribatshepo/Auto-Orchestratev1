@@ -12,6 +12,7 @@ from __future__ import annotations
 from .schemas import (
     ARTIFACT_TYPES,
     ENVELOPE_SCHEMA_VERSION,
+    EXCERPT_MAX_CHARS,
     build_envelope,
     envelope_skeleton,
 )
@@ -24,6 +25,7 @@ from .validator import (
 __all__ = [
     "ARTIFACT_TYPES",
     "ENVELOPE_SCHEMA_VERSION",
+    "EXCERPT_MAX_CHARS",
     "EnvelopeValidationError",
     "build_envelope",
     "envelope_skeleton",
