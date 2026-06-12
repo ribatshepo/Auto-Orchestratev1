@@ -202,13 +202,16 @@ After `./install.sh` succeeds, `~/.claude/` looks like this:
 │   │   ├── output-standard.md
 │   │   ├── skill-chain-contracts.md
 │   │   ├── skill-chaining-patterns.md
+│   │   ├── spawn-core.md            (slim per-spawn protocol pack, PROTOCOL-PACK-SLIM-001)
 │   │   ├── subagent-protocol-base.md
 │   │   └── task-system-integration.md
+│   ├── references/                  (… + CONSTRAINTS-REGISTRY.md, TOOL-AVAILABILITY.md)
 │   └── …
-├── lib/                           ← 3 Python packages + 1 shim
-│   ├── artifact_envelope/          (envelope schemas + validator)
+├── lib/                           ← 3 Python packages + 2 single-file modules
+│   ├── artifact_envelope/          (envelope schemas + validator; optional excerpt digest)
 │   ├── ci_engine/                  (within-run OODA + cross-run PDCA loops)
-│   ├── domain_memory/              (persistence across sessions)
+│   ├── domain_memory/              (persistence + DomainIndexer FTS query, DOMAIN-QUERY-001)
+│   ├── _time.py                    (shared UTC timestamp helpers)
 │   └── path_compat.py              (legacy-root resolver during migration)
 ├── scripts/                       ← migration + helper scripts
 ├── processes/                     ← P-004 .. P-093 catalog + injection map
@@ -279,7 +282,7 @@ Expected: a project-task-dashboard summary.
 /auto-orchestrate "trivial test: print hello"
 ```
 
-Expected: the loop controller initializes, runs Step 2.0 (mkdir), and begins pre-flight with `[AUTO-ORC] Pre-flight: 15/15 pipeline-critical agents present, 11/11 pipeline-critical skills present (manifest totals: 22 agents, 49 skills, 11 protocols, 3 lib_libraries).` Abort with Ctrl-C if you don't actually want to run the full pipeline.
+Expected: the loop controller initializes, runs Step 2.0 (mkdir), and begins pre-flight with `[AUTO-ORC] Pre-flight: 15/15 pipeline-critical agents present, 11/11 pipeline-critical skills present (manifest totals: 22 agents, 49 skills, 13 protocols, 3 lib_libraries).` Abort with Ctrl-C if you don't actually want to run the full pipeline.
 
 ### 4.5 Artifact contract templates
 
@@ -411,6 +414,15 @@ Per WORKFLOW-SYNC-002, these commands operate **read-only** when `pipeline-conte
 When the loop controller writes `gates/gate-pending-<gate_id>.json`, the user approves by writing `gates/gate-approval-<gate_id>.json` (or rejects via `gate-rejected-<gate_id>.json`). The polling interval is 30s by default (`gate_poll_interval_seconds`) up to a 24h timeout (`gate_timeout_seconds`). On timeout: `terminal_state: "gate_timeout"`.
 
 The Claude Code UI surfaces pending gates automatically; you typically click "approve" rather than writing the JSON by hand. The four boundaries currently human-gated by default: Phase 5e Debug Entry, Phase 5v Compliance Verdict, CAB Review (conditional per CAB-GATE-001), Phase 7 Release Readiness.
+
+### 6.6 Token optimization
+
+The pipeline's per-spawn and per-artifact token cost is governed by nine `checkpoint.optimizations.*`
+flags (checkpoint schema 1.10.0), default-on for fresh sessions and off on resume. They never delete
+artifacts or lose context — full bodies, briefs, and protocol docs stay on disk and are deep-read on
+demand. The full catalogue (flags, constraints, slim spawn pack, digest-by-default reading, tiered
+continuity brief, FTS retrieval, gating + migration ladder) is documented in **ARCHITECTURE.md §15**;
+the canonical per-flag rules are in `_shared/protocols/command-dispatch.md`.
 
 ---
 
@@ -617,7 +629,7 @@ The installer's orchestrator-integrity check compares orchestrator.md SHA before
 
 ### 10.3 Schema version upgrades
 
-`checkpoint.json` carries a `schema_version` field (currently `1.9.0`). When the schema bumps, the `schema-migrator` skill upgrades existing session checkpoints in place:
+`checkpoint.json` carries a `schema_version` field (currently `1.10.0`). When the schema bumps, the `schema-migrator` skill upgrades existing session checkpoints in place:
 
 ```
 /schema-migrator "bump checkpoint to 2.0.0 in .orchestrate/<sid>/"

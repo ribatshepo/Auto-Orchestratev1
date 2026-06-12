@@ -12,7 +12,7 @@
 |-------|------|---------------|
 | [Software Engineer](software-engineer.md) | `software-engineer.md` | Production code, debugging, unit tests, code reviews (L3-L5) |
 | [Infrastructure Engineer](infra-engineer.md) | `infra-engineer.md` | CI/CD pipelines, golden paths, IaC, Terraform, cloud provisioning, IAM, FinOps (BUILDS + PROVISIONS) |
-| [Security Engineer](security-engineer.md) | `security-engineer.md` | Security reviews, SAST/DAST, threat modeling, CVEs (read-only) |
+| [Security Engineer](security-engineer.md) | `security-engineer.md` | Security reviews, SAST/DAST, threat modeling, CVEs (read-only on code; writes findings) |
 | [Data Engineer](data-engineer.md) | `data-engineer.md` | ETL/ELT pipelines, data warehouse, dbt models, streaming |
 | [ML Engineer](ml-engineer.md) | `ml-engineer.md` | ML pipelines, feature stores, model serving, experiments |
 

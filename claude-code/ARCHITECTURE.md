@@ -32,8 +32,8 @@ Pipeline:
   22 agents                     (per claude-code/manifest.json — includes 4 continuity scouts under CONT-007)
   49 skills                     (per claude-code/manifest.json)
   28 processes                  (P-004 .. P-093 catalog)
-  12 shared protocols           (claude-code/_shared/protocols/*.md)
-  3 lib packages + 1 shim       (artifact_envelope/, ci_engine/, domain_memory/, path_compat.py)
+  13 shared protocols           (claude-code/_shared/protocols/*.md — includes spawn-core.md)
+  3 lib packages + 2 modules    (artifact_envelope/, ci_engine/, domain_memory/; path_compat.py + _time.py)
 
 Artifact contract:
   100 artifact rules            (templates/orchestrate-session/manifest.yml)
@@ -49,7 +49,7 @@ Pre-flight ratio (PREFLIGHT-001):
                                   spec-compliance, docs-lookup, docs-write, meta-reasoner)
   Remaining 7 agents + 38 skills are lazy-dispatched by the orchestrator at spawn time.
 
-Checkpoint schema: 1.9.0
+Checkpoint schema: 1.10.0
 ```
 
 ---
@@ -360,22 +360,22 @@ Step 4.8d.5 of `auto-orchestrate.md` runs `gate-meeting-completeness` at every s
 | Agent                               | Purpose                                                                                                                                                     | Tools                                       | Primary pipeline role                                                                                                                 |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | **orchestrator**              | Coordinates workflows by delegating to subagents while protecting context. Enforces MAIN-001 through MAIN-017.                                              | Read, Glob, Grep, Bash, Task                | Spawned every iteration; the conductor; never implements                                                                              |
-| **researcher**                | Internet-enabled research agent. Produces structured findings for downstream agents.                                                                        | Read, Glob, Grep, Bash, WebSearch, WebFetch | Stage 0a + Stage 0b per-deliverable fanout                                                                                            |
+| **researcher**                | Internet-enabled research agent. Produces structured findings for downstream agents.                                                                        | Read, Write, Glob, Grep, Bash, WebSearch, WebFetch | Stage 0a + Stage 0b per-deliverable fanout                                                                                            |
 | **continuity-scout**          | Pre-P1 context scout. Reads `.orchestrate/domain/*`, prior 3 sessions, baselines, audit ledger.                                                           | Read, Glob, Grep, Bash, Write               | Step −0.5 boot; writes `continuity-brief.md`                                                                                       |
 | **session-manager**           | Coordinates work session lifecycle, task focus, boot infrastructure.                                                                                        | Read, Glob, Grep, Bash, Task                | Step 0 boot                                                                                                                           |
 | **product-manager**           | User stories, backlogs, acceptance criteria, OKR key results, roadmaps, sprint ceremonies.                                                                  | Read, Write, Edit, Glob, Grep               | P1/P2 lead; Stage 1 facilitator (DECOMP-REASONING-001); P-029 lead                                                                    |
 | **technical-program-manager** | Cross-team dependencies, RAID, milestones, PI planning, go/no-go decisions, program-level risks.                                                            | Read, Write, Edit, Glob, Grep, Bash         | P3 lead; CAB chair; Phase 5i co-agent (P-048)                                                                                         |
-| **engineering-manager**       | Sprint planning, team health, DORA, capacity, OKR, performance reviews, impediments.                                                                        | Read, Glob, Grep, Bash                      | P1/P4 lead; Sprint Review + Retro facilitator;**MAIN-017 Part 1.4 baseline check-in lead**                                      |
+| **engineering-manager**       | Sprint planning, team health, DORA, capacity, OKR, performance reviews, impediments.                                                                        | Read, Write, Glob, Grep, Bash               | P1/P4 lead; Sprint Review + Retro facilitator;**MAIN-017 Part 1.4 baseline check-in lead**                                      |
 | **staff-principal-engineer**  | Cross-team architecture, RFCs, ADRs, architecture review, technical standards. Advisory.                                                                    | Read, Glob, Grep, Bash, Task                | Reasoning-gate participant (Stage 1, Stage 2 when architectural concerns flagged)                                                     |
 | **software-engineer**         | Production code, unit tests, code review, technical design (L3-L5 IC + Tech Lead).                                                                          | Read, Write, Edit, Bash, Glob, Grep, Task   | Stage 2 facilitator (TASK-CREATION-REASONING-001); Stage 3 lead; Stage 6 co-agent (P-060 ADR)                                         |
 | **spec-creator**              | (skill, invoked inline) — Specification and protocol documents.                                                                                            | (skill)                                     | Stage 2 spec drafting                                                                                                                 |
 | **qa-engineer**               | Test architectures, regression, coverage gaps, performance testing, acceptance criteria, DoD enforcement.                                                   | Read, Write, Bash, Glob, Grep, Task         | Stage 4 (test-writer wrapper); Stage 5 facilitator (VALIDATION-REASONING-001);**MAIN-017 Part 1.2 baseline domain review lead** |
-| **security-engineer**         | Security reviews, SAST/DAST, threat modeling, CVE triage, compliance (SOC2/ISO27001/GDPR), IAM review. Read-only evidence-based.                            | Read, Bash, Glob, Grep                      | Phase 5s lead; Stage 5 co-agent (when security scope); CAB participant                                                                |
-| **sre**                       | SLOs, error budgets, incident response, post-mortems, observability (OpenTelemetry/Grafana/Datadog), alerting. Operates production.                         | Read, Bash, Glob, Grep, Task                | Phase 5i co-lead (with infra-engineer); Stage 6 co-agent (P-059 Runbook); Phase 8 lead                                                |
+| **security-engineer**         | Security reviews, SAST/DAST, threat modeling, CVE triage, compliance (SOC2/ISO27001/GDPR), IAM review. Read-only on project code; writes findings only.    | Read, Write, Bash, Glob, Grep               | Phase 5s lead; Stage 5 co-agent (when security scope); CAB participant                                                                |
+| **sre**                       | SLOs, error budgets, incident response, post-mortems, observability (OpenTelemetry/Grafana/Datadog), alerting. Operates production.                         | Read, Write, Bash, Glob, Grep, Task         | Phase 5i co-lead (with infra-engineer); Stage 6 co-agent (P-059 Runbook); Phase 8 lead                                                |
 | **infra-engineer**            | CI/CD, IaC (Terraform/CDK/Bicep/Pulumi), container orchestration, golden paths, FinOps, IAM. Builds + provisions; does NOT operate.                         | Read, Write, Edit, Bash, Glob, Grep, Task   | Phase 5i co-lead (with sre); Phase 7 release-prep participant                                                                         |
 | **data-engineer**             | Data pipelines (ETL/ELT), data warehouse schemas, dbt, streaming (Kafka/Spark/Flink), data quality, schema migrations.                                      | Read, Write, Edit, Bash, Glob, Grep, Task   | Phase 5d co-lead (with ml-engineer)                                                                                                   |
 | **ml-engineer**               | ML pipelines, model training infrastructure, feature stores, model serving (TorchServe/Triton/BentoML), experiment tracking, drift monitoring.              | Read, Write, Edit, Bash, Glob, Grep, Task   | Phase 5d co-lead (with data-engineer)                                                                                                 |
-| **auditor**                   | Spec compliance auditor. Reads specs + codebase, produces compliance reports with gap analysis. Read-only — never modifies.                                | Read, Glob, Grep, Bash                      | Phase 5v audit loop lead                                                                                                              |
+| **auditor**                   | Spec compliance auditor. Reads specs + codebase, produces compliance reports with gap analysis. Read-only on project code; writes audit findings only.     | Read, Write, Glob, Grep, Bash               | Phase 5v audit loop lead                                                                                                              |
 | **debugger**                  | Autonomous debugging agent. Triage → research → fix → verify cycle for runtime / Docker / test / build / config failures. May spawn researcher subagent. | Read, Grep, Glob, Bash, Write, Edit         | Phase 5e debug loop lead                                                                                                              |
 | **technical-writer**          | API docs, developer guides, runbooks, release notes, SDK samples, architecture docs, KB content. Documentation-first; maintain over duplicate.              | Read, Write, Edit, Glob, Grep               | Stage 6 lead (6-category fanout)                                                                                                      |
 
@@ -523,7 +523,7 @@ Summary of the orchestrator's immutable constraint table (full text in `claude-c
 | MAIN-016 | **Deterministic artifact contract + remediation dispatch**. Read newest `gate-completeness-<TS>.json` → iterate `rules_missing[]` → spawn each owner with template → re-run checker → cap 3 cycles → terminal_state `INCOMPLETE_ARTIFACTS` on exhaustion. |
 | MAIN-017 | **Always populate `domain-reviews/`, `phase-receipts/`, `reasoning-traces/`, `meetings/`** via the Stage-Close Protocol (Parts 1.1–1.4) — see §11.4.                                                                                                      |
 
-Plus auto-orchestrate.md's own table (lines 380-410): PREFLIGHT-001, PRE-RESEARCH-GATE, WORKFLOW-SYNC-001/002, ENFORCE-UPGRADE-001, RAID-001, AUTO-EVAL-001, REASONING-GATE-001, OUTPUT-TRIPLET-001, PER-STORY-RESEARCH-001, DECOMP-REASONING-001, TASK-CREATION-REASONING-001, HUMAN-GATE-001, CAB-GATE-001, HANDOVER-001/002/003, TASK-ARG-001, AUTO-PACING-001, ENG-STD-001, MEETING-001, MEETING-GATE-001, LAYOUT-GATE-001, ORCHESTRATE-FLAT-001, ARTIFACT-ENVELOPE-001, ARTIFACT-COMPLETENESS-001, ARTIFACT-CONTRACT-001, ARTIFACT-CHECK-001, CONT-001, REASONER-001.
+Plus auto-orchestrate.md's own table (lines 380-410): PREFLIGHT-001, PRE-RESEARCH-GATE, WORKFLOW-SYNC-001/002, ENFORCE-UPGRADE-001, RAID-001, AUTO-EVAL-001, REASONING-GATE-001, OUTPUT-TRIPLET-001, PER-STORY-RESEARCH-001, DECOMP-REASONING-001, TASK-CREATION-REASONING-001, HUMAN-GATE-001, CAB-GATE-001, HANDOVER-001/002/003, TASK-ARG-001, AUTO-PACING-001, ENG-STD-001, MEETING-001, MEETING-GATE-001, LAYOUT-GATE-001, ORCHESTRATE-FLAT-001, ARTIFACT-ENVELOPE-001, ARTIFACT-COMPLETENESS-001, ARTIFACT-CONTRACT-001, ARTIFACT-CHECK-001, CONT-001, REASONER-001. Token-optimization constraints (§15): CONTEXT-DIET-001, DOMAIN-QUERY-001, PROTOCOL-PACK-SLIM-001, CONTINUITY-TIER-001 (joining the existing SKILL-FRONTMATTER-001, MANIFEST-DIGEST-001, TEMPLATE-EXTRACT-001, STAGE-RECEIPT-DIET-001, HANDOVER-COMPRESS-001). The full enumerated index lives in `_shared/references/CONSTRAINTS-REGISTRY.md`.
 
 ---
 
@@ -624,6 +624,8 @@ The baseline qa-engineer review (Part 1.2 else-branch) is a real spot-check + ve
 
 Every JSON artifact and every Markdown artifact under `.orchestrate/<sid>/**` wraps a type-specific body in the envelope defined by `claude-code/lib/artifact_envelope/schemas.py`. JSON artifacts hold the envelope as their top-level object; Markdown artifacts encode it as YAML front-matter. The orchestrator validates via `artifact_envelope.validate(path, expected_type)` before accepting; `workflow-end` validates the whole session at close. Invalid envelopes HALT with `[ENVELOPE-INVALID]`.
 
+The envelope also carries two optional digest fields (CONTEXT-DIET-001): **`excerpt`** — a bounded ≤600-char one-paragraph summary — and **`excerpt_pointers`** — body-section paths (e.g. `["body.gaps[]"]`) telling a reader where to deep-read. They are populated by the producer via `build_envelope(...)` when `checkpoint.optimizations.artifact_excerpt` is on; the full `body` is **never** truncated, and the validator treats `excerpt` as optional (type-checked, never length-failed). See §15.
+
 ### 11.6 ARTIFACT-COMPLETENESS-001 — no sentinels
 
 `meetings/`, `handovers/`, `domain-reviews/`, `phase-receipts/`, `reasoning-traces/`, and every per-stage folder MUST contain real per-run artifacts. Sentinel `*-none-*.json` placeholders are NOT acceptable. When a folder is driven by conditional activation rules and no rule fires, the orchestrator MUST emit a baseline real artifact via the Stage-Close Protocol. Empty folders at session close fail with `[ARTIFACT-MISSING]` and append to `.orchestrate/audit/findings-ledger.jsonl`.
@@ -645,9 +647,9 @@ Every JSON artifact and every Markdown artifact under `.orchestrate/<sid>/**` wr
 │   ├── baselines/
 │   └── improvement-recommender/
 └── <session-id>/                    (one per session; e.g. auto-orc-20260518-mmexec)
-    ├── checkpoint.json              ART-ROOT-001  (updated every iteration; schema 1.9.0)
-    ├── MANIFEST.jsonl               ART-ROOT-002  (append-only event log)
-    ├── continuity-brief.md          ART-ROOT-003  (written by continuity-scout pre-P1)
+    ├── checkpoint.json              ART-ROOT-001  (updated every iteration; schema 1.10.0)
+    ├── MANIFEST.jsonl               ART-ROOT-002  (append-only event log; enriched into a discovery index with artifact_type/status/excerpt under CONTEXT-DIET-001 — see §15)
+    ├── continuity-brief.md          ART-ROOT-003  (written by continuity-scout pre-P1; HOT core + Slice Index under CONTINUITY-TIER-001 — see §15)
     ├── raid-log.json                ART-ROOT-004  (RAID-001; single log, append-only)
     ├── proposed-tasks.json          ART-ROOT-005  (merged at end of Stage 1)
     ├── planning/                    ART-PLAN-*    (P1-P4 + sprint-kickoff-receipt)
@@ -758,7 +760,53 @@ LAYOUT-GATE-001 (Step 2.0 + Step 3.0 in `auto-orchestrate.md`) verifies the layo
 
 ---
 
-## 15. Where to read next
+## 15. Token-Optimization Framework
+
+The pipeline can be token-heavy: an `/auto-orchestrate` run spawns 20-60 subagents, each loading
+protocol boilerplate, the continuity brief, and upstream artifacts. A unified, opt-in framework keeps
+token cost down **without deleting any artifact (all stay byte-identical on disk) and without losing
+context fidelity** — agents can always deep-read the full artifact/brief/protocol on demand.
+
+### 15.1 Gating model — `checkpoint.optimizations.*`
+
+Every optimization is a boolean flag in `checkpoint.optimizations` (checkpoint **schema 1.10.0**).
+Convention for each flag: **slim payload primary · full payload on disk / re-derivable · consumers
+tolerate both · a `needs_full_*` spawn flag re-fattens on demand · a loud `[<ID> FAIL]` fallback never
+silently strips content**. Flags **default ON for fresh sessions**, **OFF on resume** (so resumed /
+mixed sessions stay byte-compatible). The migration ladder adds fields with safe defaults and bumps the
+schema (… 1.8.0 → 1.9.0 → **1.10.0**); see `commands/auto-orchestrate.md`. Canonical per-flag rules
+live in `_shared/protocols/command-dispatch.md`; the enumerated ID index is
+`_shared/references/CONSTRAINTS-REGISTRY.md`.
+
+### 15.2 The nine optimizations
+
+| Flag | Constraint | What it does |
+|------|-----------|--------------|
+| `skill_frontmatter_routing` | SKILL-FRONTMATTER-001 | Skill discovery loads YAML frontmatter only (~300 tok); body at invoke. |
+| `process_injection_slim` | (INJECT) | Inject only fired process hooks per stage, not the full injection map. |
+| `manifest_digest` | MANIFEST-DIGEST-001 | Non-orchestrator spawns get a ~2.6k manifest digest, not the ~19k full manifest. |
+| `per_stage_templates` | TEMPLATE-EXTRACT-001 | Orchestrator spawn loads CORE + only the active stage/phase template, not the full file. |
+| `stage_receipt_diet` | STAGE-RECEIPT-DIET-001 | Producers write slim v2.0.0 stage receipts; consumers read both v1/v2. |
+| `handover_compress` | HANDOVER-COMPRESS-001 | Slim v2.0.0 handover receipts; `context_carry` re-derived from checkpoint. |
+| `artifact_excerpt` | CONTEXT-DIET-001 | Envelope `excerpt`/`excerpt_pointers` (≤600 chars) + enriched `MANIFEST.jsonl` → digest-by-default reading; full body deep-read on demand. |
+| `protocol_pack_slim` | PROTOCOL-PACK-SLIM-001 | Spawns load `_shared/protocols/spawn-core.md` (~2k) instead of the 5-doc stack (~7.5k); code agents still get full ENG-STD at Stage 3. |
+| `continuity_brief_tiered` | CONTINUITY-TIER-001 | `continuity-scout` adds a `## HOT` core + `## Slice Index` over the same brief; spawns read HOT + their slice, full brief on demand. |
+
+### 15.3 Digest-by-default (CONTEXT-DIET-001 + DOMAIN-QUERY-001)
+
+The principle behind the newest four: **read a digest first, deep-read the body only when needed.**
+Producers populate the envelope `excerpt` (§11.5); the orchestrator enriches each `MANIFEST.jsonl` line
+with `artifact_type`/`status`/`excerpt`/`excerpt_pointers` so one index scan reveals what exists.
+`spawn-core.md` slims the per-spawn protocol stack to the rules-by-ID + a Reference Index. The continuity
+brief gains a HOT core + Slice Index (PREAMBLE-001 reads HOT + the agent's slice, and MUST full-read the
+brief before declaring "no relevant item" — so PREAMBLE-002 carryover stays sound). Agents query the
+domain-memory SQLite FTS index via `DomainIndexer.query(store, text, limit)` (DOMAIN-QUERY-001) instead
+of scanning whole JSONL ledgers, falling back to the JSONL on any error. Nothing is deleted; every full
+artifact, brief, and source protocol remains on disk and one `Read` away.
+
+---
+
+## 16. Where to read next
 
 | Topic                                         | File / location                                                                                        |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
@@ -778,8 +826,12 @@ LAYOUT-GATE-001 (Step 2.0 + Step 3.0 in `auto-orchestrate.md`) verifies the layo
 | Completeness validator                        | `claude-code/templates/orchestrate-session/check-completeness.py`                                    |
 | Templates README                              | `claude-code/templates/orchestrate-session/README.md`                                                |
 | CI engine (within-run + cross-run loops)      | `claude-code/lib/ci_engine/`                                                                         |
-| Domain memory persistence                     | `claude-code/lib/domain_memory/`                                                                     |
+| Domain memory persistence                     | `claude-code/lib/domain_memory/` (FTS retrieval via `DomainIndexer.query`, DOMAIN-QUERY-001)         |
 | Path compatibility shim                       | `claude-code/lib/path_compat.py`                                                                     |
+| Shared UTC timestamp helpers                  | `claude-code/lib/_time.py`                                                                           |
+| Token-optimization framework                  | this doc §15; canonical rules in `claude-code/_shared/protocols/command-dispatch.md`                 |
+| Slim spawn-protocol pack (PROTOCOL-PACK-SLIM-001) | `claude-code/_shared/protocols/spawn-core.md`                                                    |
+| Constraint / identifier registry (generated)  | `claude-code/_shared/references/CONSTRAINTS-REGISTRY.md`                                              |
 | Process injection map                         | `claude-code/processes/process_injection_map.md`                                                     |
 | Install / uninstall scripts                   | `install.sh`, `uninstall.sh`                                                                       |
 | User-facing playbook                          | `PLAYBOOK.md`                                                                                        |

@@ -7,7 +7,7 @@
     "total_skills": 49,
     "total_agents": 22,
     "total_commands": 1,
-    "total_protocols": 12,
+    "total_protocols": 13,
     "total_templates": 2,
     "total_style_guides": 1,
     "total_processes": 28,
@@ -15,7 +15,7 @@
     "total_tokens": 1,
     "total_schemas": 1,
     "total_lib_libraries": 3,
-    "total_single_file_modules": 1
+    "total_single_file_modules": 2
   },
   "agents": [
     {
@@ -2206,6 +2206,11 @@
         "name": "task-system-integration",
         "description": "TaskList, TaskGet, TaskCreate, TaskUpdate tool reference.",
         "path": "_shared/protocols/task-system-integration.md"
+      },
+      {
+        "name": "spawn-core",
+        "description": "Slim spawn-protocol pack (PROTOCOL-PACK-SLIM-001). Every per-spawn constraint by ID (OUT-/READ-/EARLY-/MAN-/PREAMBLE-/NAME-/ENG-STD-) plus a Reference Index pointing to the full source docs read on demand. Injected per subagent spawn (~2k tok) when checkpoint.optimizations.protocol_pack_slim is on, replacing the ~7.5k 5-doc stack.",
+        "path": "_shared/protocols/spawn-core.md"
       }
     ],
     "templates": [
@@ -2641,6 +2646,12 @@
         "base_path": "lib/",
         "filename": "path_compat.py",
         "description": "Legacy-path compatibility shim for the .orchestrate/* flatten migration. resolve_legacy_path() routes .domain/, .audit/, .pipeline-state/ references to their .orchestrate/<subdir>/ equivalents and emits one [DEPRECATED] warning per process per legacy root. Provides domain_dir(), audit_dir(), pipeline_state_dir(), ensure_unified_layout() helpers."
+      },
+      {
+        "name": "_time",
+        "base_path": "lib/",
+        "filename": "_time.py",
+        "description": "Shared UTC timestamp helpers — single source of truth for the ISO-8601 formats used across lib (utc_now_iso seconds, utc_now_iso_ms milliseconds, utc_now_iso_us microseconds). Replaces 10 duplicate _utc_now_iso definitions."
       }
     ]
   }

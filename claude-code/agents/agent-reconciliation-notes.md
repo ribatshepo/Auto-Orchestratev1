@@ -281,3 +281,21 @@ grep -c "^## Agent:" claude-code/agents/agent-reconciliation-notes.md
 **Files affected**: Agent definitions, manifest.json, orchestrator.md, auto-orchestrate.md, ARCHITECTURE.md, INTEGRATION.md, PERMISSION-MODES.md, and all process/reference files that referenced the old agent names.
 
 **Verification**: Stage 5 validation confirmed zero remaining references to removed agents in active (non-historical) documentation.
+
+---
+
+## Reconciliation — 2026-06-12 (consistency + token-optimization)
+
+**Status**: COMPLETE. A consistency audit followed by a token-optimization pass reconciled several drifts. Recorded here for traceability.
+
+**Agent roster**: count is now **22** (the historical "21 → 18" above predates CONT-007 / SCOUT-FANOUT-001, which added the 4 source-category continuity scouts `scout-jsonl`/`scout-sessions`/`scout-pipeline`/`scout-context`). Breakdown: 16 role agents + `orchestrator` + 5 pipeline/continuity agents (the `continuity-scout` consolidator + 4 scouts).
+
+**Tool-list reconciliation**: `manifest.json` was stale — it omitted `Write` for `auditor`, `researcher`, `security-engineer`, `sre`, and `engineering-manager`, which all legitimately write findings/artifacts (their `.md` frontmatter and the live agent registry already had `Write`). Added `Write` to those 5 manifest entries → `.md` ↔ manifest now 0 mismatches. "Read-only" descriptors mean read-only on **project code**; these agents still write their own findings to the session folder. `debugger.md` frontmatter normalized to inline `tools:` style.
+
+**Model normalization**: agent model fields unified to floating aliases — `opus` (6: auditor, data-engineer, infra-engineer, ml-engineer, security-engineer, software-engineer) and `sonnet` (16) — replacing the stale pins `claude-opus-4-5`/`claude-sonnet-4-5` in both `.md` frontmatter and `manifest.json` (also fixed `auditor`/`software-engineer` file↔manifest disagreement).
+
+**Preamble de-duplication**: the verbatim 7-line `## Preamble` block was factored out of 16 agent definitions into a 1-line pointer; the canonical preamble lives in `_shared/protocols/agent-preamble.md` and is delivered per-spawn via `spawn-core.md` §0 / the injected protocol stack.
+
+**New constraint families** (registered in `_shared/references/CONSTRAINTS-REGISTRY.md`): CONTEXT-DIET-001, DOMAIN-QUERY-001, PROTOCOL-PACK-SLIM-001, CONTINUITY-TIER-001.
+
+**New optimization flags** (checkpoint schema **1.10.0**): `artifact_excerpt`, `protocol_pack_slim`, `continuity_brief_tiered` — default-on fresh / off resume. **New files** registered in the manifest: `_shared/protocols/spawn-core.md`, `_shared/references/CONSTRAINTS-REGISTRY.md`, `lib/_time.py`. See ARCHITECTURE.md §15.

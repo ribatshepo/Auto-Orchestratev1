@@ -98,6 +98,8 @@ Claude Code operates in different permission modes that affect tool availability
 
 > **Manifest digest impact (MANIFEST-DIGEST-001)**: When `checkpoint.optimizations.manifest_digest` is on (default), most subagents receive a 2.6k slim digest of `manifest.json` instead of the full file. This does not change permission behaviour — agents still see the same `dispatch_triggers`. Only `orchestrator` and `session-manager` receive the full manifest by default; other agents that need full chaining metadata can set `needs_full_manifest: true` on their spawn.
 
+> **Token-optimization flags are permission-neutral**: the `checkpoint.optimizations.*` flags (including `protocol_pack_slim`, `continuity_brief_tiered`, and `artifact_excerpt`) change only *what content* a spawn loads (a slim protocol pack, a scoped continuity slice, an artifact excerpt vs. the full body) — never an agent's **tool grants**. An agent's permitted tools are fixed by its manifest/`.md` `tools` field regardless of which optimizations are active. Two notes: code-producing agents still receive the full `engineering-standards.md` at Stage 3 even under `protocol_pack_slim`; and digest-by-default reading (CONTEXT-DIET-001) only changes default read volume — the full artifact is always readable on demand with the same permissions. See ARCHITECTURE.md §15.
+
 ### orchestrator
 
 **Preferred Mode**: Auto-Accept
