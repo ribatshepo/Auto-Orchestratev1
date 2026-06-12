@@ -1,0 +1,1 @@
+{"schema_version":"1.0.0","artifact_type":"manifest_entry","session_id":"{{sid}}","produced_at":"{{produced_at}}","produced_by":"orchestrator","artifact_path":".orchestrate/{{sid}}/checkpoint.json","artifact_kind":"checkpoint","rule_id":"ART-ROOT-001","sha256":"{{sha256}}"}

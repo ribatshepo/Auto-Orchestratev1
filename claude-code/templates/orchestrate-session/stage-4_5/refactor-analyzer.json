@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "refactor_analyzer",
+  "session_id": "{{sid}}",
+  "stage": "4.5",
+  "produced_by": "refactor-analyzer",
+  "produced_at": "{{produced_at}}",
+  "summary": {
+    "candidates_total": 0,
+    "severity_HIGH": 0,
+    "severity_MEDIUM": 0,
+    "severity_LOW": 0
+  },
+  "candidates": []
+}

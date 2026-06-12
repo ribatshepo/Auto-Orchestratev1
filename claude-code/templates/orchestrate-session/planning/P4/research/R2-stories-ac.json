@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P4",
+  "role": "R2",
+  "focus": "stories-acceptance-criteria",
+  "producer_agent": "product-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "stories": [
+      {
+        "id": "",
+        "title": "",
+        "acceptance_criteria": [],
+        "points": 0,
+        "assignee": "",
+        "deliverable_id": ""
+      }
+    ]
+  },
+  "side_outputs": ["planning/P4-stories.md"],
+  "sources": [],
+  "confidence_local": 0.0
+}

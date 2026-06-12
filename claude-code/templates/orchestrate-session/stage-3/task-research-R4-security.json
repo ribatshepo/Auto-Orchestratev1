@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_3_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 3,
+  "role": "R4",
+  "focus": "security-review",
+  "producer_agent": "security-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "code_path_risks": [
+      {
+        "risk_class": "injection|auth|secrets|SSRF|deserialization|XSS|path-traversal",
+        "location": "",
+        "severity": "CRITICAL|HIGH|MED|LOW",
+        "remedy": ""
+      }
+    ],
+    "cve_pullthrough_from_stage_0b": [
+      {"package": "", "cve_id": "", "severity": "", "still_blocked": true}
+    ],
+    "blocked_packages_to_avoid": []
+  },
+  "sources": ["stage-0/<deliverable>/research/R2-risk.json", "stage-2/{{task}}/analysis/R4-risk.json"],
+  "confidence_local": 0.0
+}

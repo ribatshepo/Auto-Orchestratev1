@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_2_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 2,
+  "role": "R4",
+  "focus": "risk-surface",
+  "producer_agent": "security-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "eng_std_risks": [
+      {
+        "section": "§3 Result/Either|§8 size limits|§9 DI lifetime",
+        "risk": "",
+        "severity": "HIGH|MED|LOW",
+        "remedy": ""
+      }
+    ],
+    "cve_pullthrough": [
+      {
+        "from_stage_0b_sidecar": "stage-0/<deliverable>/research/R2-risk.json",
+        "package": "",
+        "cve_id": "",
+        "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+        "relevance_to_task": ""
+      }
+    ],
+    "threat_model_notes": []
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

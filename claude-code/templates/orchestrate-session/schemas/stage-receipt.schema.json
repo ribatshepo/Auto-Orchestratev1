@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/stage-receipt.json",
+  "title": "Stage Receipt",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "stage", "status", "produced_at"],
+  "properties": {
+    "artifact_type": {"const": "stage_receipt"},
+    "stage":         {"oneOf": [{"type": "integer"}, {"type": "string"}]},
+    "stage_name":    {"type": "string"},
+    "status":        {"enum": ["pending", "in_progress", "completed", "failed"]},
+    "task_id":       {"type": "string"},
+    "deliverable":   {"type": "string"},
+    "gate_verdict":  {"type": "string"},
+    "gate_confidence": {"type": "number"}
+  }
+}

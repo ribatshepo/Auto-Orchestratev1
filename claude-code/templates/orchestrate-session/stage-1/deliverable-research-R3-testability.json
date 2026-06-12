@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_1_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 1,
+  "role": "R3",
+  "focus": "testability",
+  "producer_agent": "qa-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "ac_test_map": [
+      {
+        "story_id": "",
+        "acceptance_criterion": "",
+        "test_type": "unit|integration|e2e",
+        "risk_class": "LOW|MED|HIGH",
+        "p2_dod_row_trace": ""
+      }
+    ],
+    "untestable_acs": [],
+    "coverage_summary": {"unit": 0, "integration": 0, "e2e": 0}
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

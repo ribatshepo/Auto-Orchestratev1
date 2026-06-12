@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.9.0",
+  "artifact_type": "checkpoint",
+  "session_id": "{{sid}}",
+  "created_at": "{{created_at}}",
+  "updated_at": "{{updated_at}}",
+  "status": "in_progress",
+  "iteration": 0,
+  "max_iterations": 100,
+  "original_input": "{{original_input}}",
+  "scope": {
+    "flag": null,
+    "resolved": "{{scope_resolved}}",
+    "layers": []
+  },
+  "permissions": {
+    "autonomous_operation": true,
+    "session_folder_access": true,
+    "no_clarifying_questions": true,
+    "granted_at": "{{created_at}}"
+  },
+  "enhanced_prompt": {
+    "objective": "{{enhanced_objective}}",
+    "context": "{{enhanced_context}}",
+    "deliverables": [],
+    "constraints": [],
+    "success_criteria": [],
+    "out_of_scope": [],
+    "assumptions": []
+  },
+  "task_ids": [],
+  "parent_task_id": null,
+  "iteration_history": [],
+  "terminal_state": null,
+  "current_pipeline_stage": "P1",
+  "stages_completed": [],
+  "planning_stages_completed": [],
+  "planning_artifacts": {},
+  "gate_state": {},
+  "triage": null,
+  "fast_path_used": false,
+  "optimizations": {},
+  "session_token_total": 0
+}

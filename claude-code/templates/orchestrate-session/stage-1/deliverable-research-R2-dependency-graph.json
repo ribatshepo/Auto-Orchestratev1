@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_1_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 1,
+  "role": "R2",
+  "focus": "dependency-graph",
+  "producer_agent": "technical-program-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "inter_story_edges": [
+      {
+        "from_story_id": "",
+        "to_story_id": "",
+        "edge_type": "data|interface|sequence",
+        "rationale": ""
+      }
+    ],
+    "proposed_independence_groups": [
+      {
+        "group_id": "G1",
+        "story_ids": [],
+        "rationale": ""
+      }
+    ],
+    "cycles_detected": []
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

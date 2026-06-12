@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P3",
+  "role": "R4",
+  "focus": "communication-protocol",
+  "producer_agent": "engineering-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "communication_protocol": [
+      {
+        "mechanism": "",
+        "cadence": "",
+        "participants": [],
+        "purpose": ""
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

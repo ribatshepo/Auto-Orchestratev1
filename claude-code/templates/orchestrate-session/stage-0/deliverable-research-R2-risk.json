@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_0b_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 0,
+  "substage": "0b",
+  "role": "R2",
+  "focus": "risk-cve-threats",
+  "producer_agent": "security-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "cve_findings": [
+      {
+        "package": "",
+        "cve_id": "",
+        "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+        "fixed_in": "",
+        "status": "BLOCKED|PATCHED|MONITORED"
+      }
+    ],
+    "threat_surface": [],
+    "risk_remedies": [
+      {
+        "risk": "",
+        "severity": "HIGH|MED|LOW",
+        "remedy": "",
+        "applies_to": ""
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

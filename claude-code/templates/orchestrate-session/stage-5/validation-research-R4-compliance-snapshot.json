@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_5_research_sidecar",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "role": "R4",
+  "focus": "pre-validation-compliance-snapshot",
+  "producer_agent": "auditor",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "skill_invocations": ["spec-compliance"],
+  "body": {
+    "spec_to_impl_drift": {
+      "specs_covered_pct": 0,
+      "specs_missing_implementation": [],
+      "impl_without_spec": []
+    },
+    "rule_coverage_delta": {
+      "rules_planned": 0,
+      "rules_implemented": 0,
+      "rules_not_implemented": []
+    },
+    "ac_verification_summary": {
+      "total_acs": 0,
+      "verified_acs": 0,
+      "unverified_acs": []
+    }
+  },
+  "sources": ["stage-2/", "stage-3/"],
+  "confidence_local": 0.0
+}

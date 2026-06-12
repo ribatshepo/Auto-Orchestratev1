@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "reasoning_trace",
+  "session_id": "{{sid}}",
+  "gate": "{{gate_id}}",
+  "produced_at": "{{produced_at}}",
+  "produced_by": "meta-reasoner",
+  "participants": [],
+  "dsvcrr_trace": {
+    "decompose": {
+      "sub_questions": []
+    },
+    "solve": {
+      "per_question_scores": {},
+      "concerns": []
+    },
+    "verify": {
+      "consistency_check": "PASS",
+      "outlier_check": "PASS",
+      "cycle_check": "N/A"
+    },
+    "synthesize": {
+      "aggregate_confidence": 0.0,
+      "per_question_means": {},
+      "consensus": "{{consensus}}"
+    },
+    "reflect": {
+      "final_confidence": 0.0,
+      "recommended_action": "{{recommended_action}}"
+    }
+  }
+}

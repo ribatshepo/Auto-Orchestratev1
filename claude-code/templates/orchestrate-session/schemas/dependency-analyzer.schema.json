@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/dependency-analyzer.json",
+  "title": "Dependency Analyzer Report",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "summary", "cycles"],
+  "properties": {
+    "artifact_type": {"const": "dependency_analyzer"},
+    "summary":       {"type": "object"},
+    "cycles":        {"type": "array"},
+    "layer_violations": {"type": "array"}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_2_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 2,
+  "role": "R2",
+  "focus": "api-type-contract",
+  "producer_agent": "software-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "interfaces": [
+      {
+        "name": "",
+        "signature": "",
+        "callers": [],
+        "callees": []
+      }
+    ],
+    "proposed_data_classes": [
+      {
+        "class_name": "",
+        "replaces_args_of": "",
+        "fields": [
+          {"name": "", "type": "", "immutable": true}
+        ]
+      }
+    ],
+    "factory_di_wiring": [
+      {"component": "", "lifetime": "singleton|scoped|transient", "rationale": ""}
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

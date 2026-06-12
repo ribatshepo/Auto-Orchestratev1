@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P3",
+  "role": "R3",
+  "focus": "critical-path",
+  "producer_agent": "staff-principal-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "critical_path": [
+      {
+        "step": 1,
+        "deliverable_id": "",
+        "depends_on": [],
+        "duration_estimate": "",
+        "slack_days": 0
+      }
+    ],
+    "minimum_timeline_days": 0
+  },
+  "side_outputs": ["planning/P3-critical-path-review.md"],
+  "sources": [],
+  "confidence_local": 0.0
+}

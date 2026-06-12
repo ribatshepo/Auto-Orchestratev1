@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P1",
+  "role": "R4",
+  "focus": "boundaries-exclusions",
+  "producer_agent": "technical-program-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "boundaries": [
+      {
+        "exclusion": "",
+        "reason": "",
+        "future_home": "",
+        "raises_risk": false
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

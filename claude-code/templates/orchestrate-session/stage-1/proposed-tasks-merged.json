@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "proposed_tasks_merged",
+  "session_id": "{{sid}}",
+  "produced_at": "{{produced_at}}",
+  "produced_by": "orchestrator",
+  "merge_strategy": "concat-by-deliverable",
+  "sources": [],
+  "total_tasks": 0,
+  "tasks": [],
+  "independence_groups": [],
+  "dependency_graph": {"nodes": [], "edges": []},
+  "parallel_cap": 5
+}

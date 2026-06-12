@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "continuity_brief_part",
+  "artifact_id": "continuity-part-context-{{sid}}-{{ts}}",
+  "session_id": "{{sid}}",
+  "stage": "cross-session",
+  "producer_agent": "scout-context",
+  "created_at": "{{produced_at}}",
+  "status": "sentinel",
+  "verdict": "n/a",
+  "inputs": [
+    ".orchestrate/domain/user_preferences.jsonl",
+    ".orchestrate/domain/codebase_analysis.jsonl"
+  ],
+  "outputs": [
+    {"path": ".orchestrate/{{sid}}/continuity-brief/parts/scout-context.json", "role": "primary"}
+  ],
+  "body": {
+    "sections": {
+      "user_preferences": [],
+      "codebase_conventions": []
+    },
+    "counts": {"preferences": 0, "conventions": 0},
+    "conflicts_detected": [],
+    "confidence_local": 0.0
+  }
+}

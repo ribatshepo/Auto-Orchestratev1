@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P1",
+  "role": "R1",
+  "focus": "outcome+cost-of-inaction",
+  "producer_agent": "product-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "outcome": {
+      "statement": "",
+      "metric": "",
+      "baseline": "",
+      "target": "",
+      "timeline": ""
+    },
+    "cost_of_inaction": {
+      "impact_summary": "",
+      "quantified_risk": "",
+      "stakeholders_affected": []
+    }
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

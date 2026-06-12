@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 2,
+  "stage_name": "specification",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "gate_verdict": "{{gate_verdict}}",
+  "gate_confidence": 0.0,
+  "gate_decided_by": "reasoning-gate",
+  "summary": {
+    "specs_produced": 0,
+    "deliverables_covered": 0,
+    "independence_groups": 0,
+    "sub_question_scores": {
+      "S1_clarity": 0.0,
+      "S2_testability": 0.0,
+      "S3_scope_alignment": 0.0,
+      "S4_eng_std_001": 0.0,
+      "S5_dependencies": 0.0,
+      "S6_security": 0.0
+    },
+    "eng_std_001_aggregate": 0.0
+  },
+  "outputs": {
+    "spec_paths": [],
+    "meeting_minutes": ".orchestrate/{{sid}}/meetings/minutes-task-creation-multi-agent-sync-{{ts}}.json",
+    "reasoning_trace": ".orchestrate/{{sid}}/reasoning-traces/reasoning-trace-task-creation-{{ts}}.json",
+    "gate_approval": ".orchestrate/{{sid}}/gates/gate-approval-task-creation-{{ts}}.json"
+  },
+  "domain_memory_writes": [],
+  "key_findings": [],
+  "warnings_detail": [],
+  "errors": [],
+  "duration_seconds": 0
+}

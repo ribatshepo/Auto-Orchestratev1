@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "gate_completeness",
+  "session_id": "{{sid}}",
+  "gate_id": "completeness",
+  "produced_at": "{{produced_at}}",
+  "decided_by": "check-completeness.py",
+  "verdict": "{{verdict}}",
+  "rules_total": 0,
+  "rules_satisfied": 0,
+  "rules_missing": [],
+  "consistency_checks": [],
+  "extra_paths": [],
+  "remediation": []
+}

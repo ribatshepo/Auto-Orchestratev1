@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_1_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 1,
+  "role": "R1",
+  "focus": "story-sizing",
+  "producer_agent": "product-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "candidate_stories": [
+      {
+        "id": "",
+        "title": "",
+        "acceptance_criteria": [],
+        "points": 0,
+        "size": "XS|S|M|L|XL",
+        "needs_split": false,
+        "split_rationale": ""
+      }
+    ],
+    "stories_over_threshold": [],
+    "total_estimated_points": 0
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

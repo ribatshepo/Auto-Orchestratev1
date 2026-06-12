@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "raid_log",
+  "session_id": "{{sid}}",
+  "initialized_at": "{{produced_at}}",
+  "last_updated": "{{produced_at}}",
+  "entry_count": 0,
+  "entries": [
+    {
+      "_template_example": true,
+      "id": "ASSM-001",
+      "type": "Assumption",
+      "severity": "MEDIUM",
+      "title": "Replace this with the first real assumption captured at P2.",
+      "mitigation": "Describe the mitigation or verification step.",
+      "owner": "{{owner_agent}}",
+      "status": "OPEN",
+      "recorded_at": "{{produced_at}}",
+      "source": "P2-scope-contract"
+    }
+  ]
+}

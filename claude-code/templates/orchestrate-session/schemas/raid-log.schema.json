@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/raid-log.json",
+  "title": "RAID Log",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "entries"],
+  "properties": {
+    "artifact_type": {"const": "raid_log"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "title"],
+        "properties": {
+          "id":       {"type": "string"},
+          "type":     {"enum": ["Risk", "Assumption", "Issue", "Decision"]},
+          "severity": {"enum": ["HIGH", "MEDIUM", "LOW"]},
+          "title":    {"type": "string"},
+          "owner":    {"type": "string"},
+          "status":   {"enum": ["OPEN", "MITIGATED", "ACCEPTED", "CLOSED"]}
+        }
+      }
+    }
+  }
+}

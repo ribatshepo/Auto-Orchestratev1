@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P4",
+  "role": "R4",
+  "focus": "sprint-level-dod",
+  "producer_agent": "qa-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "sprint_dod_checklist": [
+      {
+        "criterion": "",
+        "verification_method": "automated|manual|review",
+        "owner": ""
+      }
+    ]
+  },
+  "side_outputs": ["planning/P4-dod-verification.md"],
+  "sources": [],
+  "confidence_local": 0.0
+}

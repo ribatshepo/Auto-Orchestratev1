@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "gate_pending",
+  "session_id": "{{sid}}",
+  "gate_id": "{{gate_id}}",
+  "produced_at": "{{produced_at}}",
+  "recommended_verdict": "{{recommended_verdict}}",
+  "aggregate_confidence": 0.0,
+  "skip_human_gate": false,
+  "skip_reason": "",
+  "validation_summary": {}
+}

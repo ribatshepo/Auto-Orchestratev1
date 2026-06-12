@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P2",
+  "role": "R4",
+  "focus": "assumptions-risks-appsec",
+  "producer_agent": "security-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "assumptions": [
+      {
+        "id": "",
+        "statement": "",
+        "validation_plan": "",
+        "owner": ""
+      }
+    ],
+    "risks": [
+      {
+        "id": "",
+        "description": "",
+        "severity": "HIGH|MED|LOW",
+        "mitigation": "",
+        "owner": ""
+      }
+    ],
+    "appsec_scope_notes": ""
+  },
+  "side_outputs": ["planning/P2-appsec-scope-review.md", "raid-log.json (append)"],
+  "sources": [],
+  "confidence_local": 0.0
+}

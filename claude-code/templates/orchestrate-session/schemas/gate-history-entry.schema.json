@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/gate-history-entry.json",
+  "title": "gate-history.jsonl entry",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "gate_id", "verdict"],
+  "properties": {
+    "artifact_type": {"const": "gate_history_entry"},
+    "gate_id":       {"type": "string"},
+    "verdict":       {"type": "string"},
+    "confidence":    {"type": "number"}
+  }
+}

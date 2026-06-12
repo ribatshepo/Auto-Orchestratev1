@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_4_5_skill_output",
+  "session_id": "{{sid}}",
+  "stage": "4.5",
+  "skill": "security-auditor",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "scope": "session-touched-files",
+    "findings": [
+      {
+        "vulnerability": "TOCTOU|injection|symlink-attack|unsanitized-input|insecure-permissions",
+        "file": "",
+        "line": 0,
+        "severity": "CRITICAL|HIGH|MED|LOW",
+        "cwe": "",
+        "remediation": ""
+      }
+    ],
+    "summary": {"critical": 0, "high": 0, "medium": 0, "low": 0},
+    "files_scanned": 0
+  }
+}

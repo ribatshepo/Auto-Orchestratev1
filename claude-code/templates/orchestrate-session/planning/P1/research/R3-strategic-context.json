@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P1",
+  "role": "R3",
+  "focus": "strategic-context-okr",
+  "producer_agent": "staff-principal-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "okr_alignment": [
+      {
+        "okr_id": "",
+        "objective": "",
+        "key_result": "",
+        "linkage_strength": "STRONG|MODERATE|WEAK"
+      }
+    ],
+    "quarterly_theme": "",
+    "strategic_rationale": ""
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/reasoning-trace.json",
+  "title": "DSVCRR Reasoning Trace",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "gate", "dsvcrr_trace"],
+  "properties": {
+    "artifact_type": {"const": "reasoning_trace"},
+    "gate":          {"type": "string"},
+    "participants":  {"type": "array"},
+    "dsvcrr_trace":  {
+      "type": "object",
+      "required": ["decompose", "solve", "verify", "synthesize", "reflect"],
+      "properties": {
+        "decompose":  {"type": "object"},
+        "solve":      {"type": "object"},
+        "verify":     {"type": "object"},
+        "synthesize": {"type": "object"},
+        "reflect":    {"type": "object"}
+      }
+    }
+  }
+}

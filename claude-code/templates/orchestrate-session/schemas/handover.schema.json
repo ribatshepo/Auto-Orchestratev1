@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/handover.json",
+  "title": "Handover Receipt",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "handover_id", "from_agent", "to_agent"],
+  "properties": {
+    "artifact_type": {"const": "handover_receipt"},
+    "handover_id":   {"type": "string"},
+    "from_agent":    {"type": "string"},
+    "to_agent":      {"type": "string"},
+    "primary_artifact": {"type": "string"},
+    "supplementary_artifacts": {"type": "array", "items": {"type": "string"}},
+    "key_decisions": {"type": "array"},
+    "open_questions": {"type": "array"},
+    "blockers": {"type": "array"}
+  }
+}

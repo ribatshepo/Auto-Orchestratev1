@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/validation-report.json",
+  "title": "Validation Report",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "multi_agent_sync", "sub_question_results"],
+  "properties": {
+    "artifact_type":      {"const": "validation_report"},
+    "multi_agent_sync":   {"type": "object"},
+    "sub_question_results": {"type": "object"},
+    "spec_compliance":    {"type": "object"},
+    "security":           {"type": "object"}
+  }
+}

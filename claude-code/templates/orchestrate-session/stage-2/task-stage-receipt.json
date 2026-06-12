@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "task_id": "{{task}}",
+  "deliverable_id": "{{deliverable}}",
+  "stage": 2,
+  "produced_by": "spec-creator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "spec_path": ".orchestrate/{{sid}}/stage-2/{{task}}/spec.md",
+  "gate_approval": ".orchestrate/{{sid}}/stage-2/{{task}}/gate-approval-task-creation-{{task}}-{{ts}}.json",
+  "sub_question_scores": {
+    "S1_clarity": 0.0,
+    "S2_testability": 0.0,
+    "S3_scope_alignment": 0.0,
+    "S4_eng_std_001": 0.0,
+    "S5_dependencies": 0.0,
+    "S6_security": 0.0
+  },
+  "errors": [],
+  "warnings": []
+}

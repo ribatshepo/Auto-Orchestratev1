@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/checkpoint.json",
+  "title": "Session Checkpoint",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["session_id", "created_at", "status", "iteration", "stages_completed"],
+  "properties": {
+    "session_id":        {"type": "string"},
+    "status":            {"enum": ["pending", "in_progress", "completed", "failed", "INCOMPLETE_ARTIFACTS"]},
+    "iteration":         {"type": "integer"},
+    "stages_completed":  {"type": "array"},
+    "gate_state":        {"type": "object"}
+  }
+}

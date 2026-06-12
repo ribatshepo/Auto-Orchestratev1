@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "meeting_ceremony",
+  "session_id": "{{sid}}",
+  "meeting_id": "{{meeting_id}}",
+  "process_id": "{{process_id}}",
+  "meeting_type": "{{ceremony_type}}",
+  "produced_at": "{{produced_at}}",
+  "facilitator_agent": "{{facilitator}}",
+  "attendees": [],
+  "minutes": {
+    "sprint_goal": "{{sprint_goal}}",
+    "sprint_goal_assessment": "{{assessment}}",
+    "agenda_items": [],
+    "decisions": [],
+    "action_items": []
+  },
+  "triggers_handover_to": null
+}

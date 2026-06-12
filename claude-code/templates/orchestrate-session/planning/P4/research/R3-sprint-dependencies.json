@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P4",
+  "role": "R3",
+  "focus": "sprint-dependencies",
+  "producer_agent": "technical-program-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "sprint_dependencies": [
+      {
+        "dependency": "",
+        "needed_by": "",
+        "current_status": "",
+        "contingency_if_late": ""
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

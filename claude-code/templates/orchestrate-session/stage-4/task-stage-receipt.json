@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "task_id": "{{task}}",
+  "stage": 4,
+  "produced_by": "test-writer-pytest",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "test_files_created": [
+    {
+      "path": "{{test_path}}",
+      "loc": 0,
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "test_names": []
+    }
+  ],
+  "coverage": {
+    "module": "{{module}}",
+    "before_pct": 0.0,
+    "after_pct": 0.0
+  },
+  "errors": [],
+  "warnings": []
+}

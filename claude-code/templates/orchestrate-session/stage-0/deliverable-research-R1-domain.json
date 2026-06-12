@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_0b_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 0,
+  "substage": "0b",
+  "role": "R1",
+  "focus": "domain-landscape",
+  "producer_agent": "researcher",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "technology_landscape": [],
+    "existing_implementations": [],
+    "recommended_libraries": [
+      {
+        "package": "",
+        "recommended_version": "",
+        "verified_from": "",
+        "rationale": ""
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

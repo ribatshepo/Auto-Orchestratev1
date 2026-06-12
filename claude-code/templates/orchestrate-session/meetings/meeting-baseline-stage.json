@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "meeting_minutes",
+  "session_id": "{{sid}}",
+  "meeting_id": "baseline-stage-{{stage}}-checkin",
+  "meeting_type": "baseline-stage-checkin",
+  "produced_at": "{{produced_at}}",
+  "facilitator": "engineering-manager",
+  "attendees": ["engineering-manager"],
+  "baseline": true,
+  "trigger": "stage-close, no canonical meeting fired (MEETING-GATE-001 baseline path per ARTIFACT-COMPLETENESS-001)",
+  "stage": "{{stage}}",
+  "source_stage_receipt": "{{stage_receipt_path}}",
+  "minutes": {
+    "stage_outcome_summary": "{{stage_outcome_summary}}",
+    "blockers_seen": [],
+    "handoff_to_next_stage": "{{handoff_to_next_stage}}",
+    "action_items": []
+  },
+  "scope": "Stage {{stage}} closure check-in",
+  "sub_questions": [],
+  "participant_votes": {},
+  "aggregate_confidence_per_question": {},
+  "overall_aggregate_confidence": 1.0,
+  "key_decisions": [],
+  "caveats_per_deliverable": {},
+  "blockers_surfaced": [],
+  "action_items": []
+}

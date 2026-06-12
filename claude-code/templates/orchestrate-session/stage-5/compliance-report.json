@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "compliance_report",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "produced_by": "spec-compliance",
+  "produced_at": "{{produced_at}}",
+  "compliance_score": 0.0,
+  "threshold": 95,
+  "pass": true,
+  "methodology": "path_flexible_search",
+  "total_specs": 0,
+  "passed": 0,
+  "partial": 0,
+  "failed": 0,
+  "results": []
+}

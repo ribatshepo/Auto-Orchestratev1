@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P2",
+  "role": "R2",
+  "focus": "definition-of-done",
+  "producer_agent": "qa-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "definitions_of_done": [
+      {
+        "deliverable_id": "D1",
+        "done_when": [
+          {
+            "criterion": "",
+            "test_method": "automated|manual|review",
+            "evidence_required": ""
+          }
+        ]
+      }
+    ]
+  },
+  "side_outputs": ["planning/P2-dod-review.md"],
+  "sources": [],
+  "confidence_local": 0.0
+}

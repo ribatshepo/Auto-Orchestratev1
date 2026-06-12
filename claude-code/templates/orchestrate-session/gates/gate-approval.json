@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "gate_approval",
+  "session_id": "{{sid}}",
+  "gate_id": "{{gate_id}}",
+  "gate_name": "{{gate_name}}",
+  "produced_at": "{{produced_at}}",
+  "decided_by": "reasoning-gate",
+  "verdict": "APPROVED",
+  "confidence": 0.0,
+  "sub_question_scores": {},
+  "all_sub_questions_above_0_8": true,
+  "retry_count": 0,
+  "output_triplet": {
+    "artifact_paths": [],
+    "meeting_minutes": "",
+    "reasoning_trace": ""
+  }
+}

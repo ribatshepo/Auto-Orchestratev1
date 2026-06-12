@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_4_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 4,
+  "role": "R1",
+  "focus": "coverage-delta",
+  "producer_agent": "qa-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "existing_test_inventory": [],
+    "missing_tests_per_ac": [
+      {
+        "ac": "",
+        "missing_test_cases": [],
+        "test_type": "unit|integration|e2e"
+      }
+    ],
+    "coverage_summary": {"before_pct": 0, "after_target_pct": 0}
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

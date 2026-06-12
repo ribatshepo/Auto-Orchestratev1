@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P1",
+  "role": "R2",
+  "focus": "beneficiaries",
+  "producer_agent": "researcher",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "beneficiaries": [
+      {
+        "segment": "",
+        "before_state": "",
+        "after_state": "",
+        "evidence_sources": []
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

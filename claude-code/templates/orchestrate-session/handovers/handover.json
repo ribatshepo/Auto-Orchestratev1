@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "handover_receipt",
+  "handover_id": "{{handover_id}}",
+  "session_id": "{{sid}}",
+  "from_agent": "{{from_agent}}",
+  "to_agent": "{{to_agent}}",
+  "from_phase": "{{from_phase}}",
+  "to_phase": "{{to_phase}}",
+  "produced_at": "{{produced_at}}",
+  "consumed": false,
+  "confidence": "high",
+  "primary_artifact": "{{primary_artifact}}",
+  "supplementary_artifacts": [],
+  "key_decisions": [],
+  "open_questions": [],
+  "blockers": [],
+  "context_carry": {
+    "session_id": "{{sid}}",
+    "scope": "{{scope}}",
+    "active_processes": [],
+    "active_phases": []
+  }
+}

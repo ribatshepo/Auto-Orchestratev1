@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/gate.json",
+  "title": "Gate Decision",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "gate_id", "produced_at"],
+  "properties": {
+    "artifact_type": {"enum": ["gate_approval", "gate_pending", "gate_conditional", "gate_rejected", "gate_completeness"]},
+    "gate_id":       {"type": "string"},
+    "verdict":       {"enum": ["APPROVED", "CONDITIONAL", "REJECTED", "PENDING", "PASS", "FAIL"]},
+    "confidence":    {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "decided_by":    {"type": "string"},
+    "sub_question_scores": {"type": "object"}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/proposed-tasks.json",
+  "title": "Proposed Tasks",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "tasks"],
+  "properties": {
+    "artifact_type": {"enum": ["proposed_tasks", "proposed_tasks_merged"]},
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id":          {"type": "string"},
+          "deliverable": {"type": "string"},
+          "subject":     {"type": "string"},
+          "story_points":{"type": "number"},
+          "blockedBy":   {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

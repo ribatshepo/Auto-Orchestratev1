@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/phase-receipt.json",
+  "title": "Phase Receipt",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "phase", "produced_at"],
+  "properties": {
+    "artifact_type": {"const": "phase_receipt"},
+    "phase":         {"type": "string"},
+    "phase_kind":    {"enum": ["stage-close", "sub-phase", "ceremony"]},
+    "verdict":       {"type": "string"},
+    "started_at":    {"type": "string", "format": "date-time"},
+    "completed_at":  {"type": "string", "format": "date-time"},
+    "artifacts_emitted": {"type": "array"},
+    "agents_spawned":   {"type": "array"},
+    "next_phase":    {"type": ["string", "null"]}
+  }
+}

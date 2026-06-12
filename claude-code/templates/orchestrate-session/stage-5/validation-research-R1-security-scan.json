@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_5_research_sidecar",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "role": "R1",
+  "focus": "pre-validation-security-scan",
+  "producer_agent": "security-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "new_findings_since_stage_2": [
+      {
+        "kind": "CVE|secret|SAST|misconfiguration",
+        "identifier": "",
+        "severity": "CRITICAL|HIGH|MED|LOW",
+        "location": "",
+        "remediation": ""
+      }
+    ],
+    "resolved_since_stage_2": [],
+    "blocking_for_release": []
+  },
+  "sources": ["stage-3/", "stage-4/", "stage-4.5/security-auditor.json"],
+  "confidence_local": 0.0
+}

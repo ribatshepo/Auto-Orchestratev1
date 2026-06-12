@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_3_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 3,
+  "role": "R3",
+  "focus": "perf-scaling",
+  "producer_agent": "sre",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "hotspots": [
+      {
+        "location": "",
+        "pattern": "loop|IO|allocation|sync-blocking|N+1",
+        "severity": "HIGH|MED|LOW",
+        "mitigation": ""
+      }
+    ],
+    "recommended_benchmarks": [
+      {"name": "", "purpose": "", "target_p99_ms": 0}
+    ],
+    "scaling_notes": ""
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

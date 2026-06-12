@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P3",
+  "role": "R2",
+  "focus": "shared-resource-conflicts",
+  "producer_agent": "infra-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "shared_resources": [
+      {
+        "resource": "",
+        "competing_demands": [],
+        "resolution": "",
+        "owner": ""
+      }
+    ]
+  },
+  "side_outputs": ["planning/P3-conflict-resolution.md"],
+  "sources": [],
+  "confidence_local": 0.0
+}

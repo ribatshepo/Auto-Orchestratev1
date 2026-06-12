@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P3",
+  "role": "R1",
+  "focus": "dependency-register",
+  "producer_agent": "technical-program-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "skill_invocations": ["dependency-analyzer"],
+  "body": {
+    "dependency_register": [
+      {
+        "id": "",
+        "dependent_team": "",
+        "depends_on": "",
+        "what_is_needed": "",
+        "by_when": "",
+        "status": "OPEN|PROVISIONED|BLOCKED",
+        "owner": "",
+        "escalation_path": ""
+      }
+    ],
+    "circular_dependencies_detected": [],
+    "architecture_layer_violations": []
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

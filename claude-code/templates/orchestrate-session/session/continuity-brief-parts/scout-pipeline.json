@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "continuity_brief_part",
+  "artifact_id": "continuity-part-pipeline-{{sid}}-{{ts}}",
+  "session_id": "{{sid}}",
+  "stage": "cross-session",
+  "producer_agent": "scout-pipeline",
+  "created_at": "{{produced_at}}",
+  "status": "sentinel",
+  "verdict": "n/a",
+  "inputs": [
+    ".orchestrate/pipeline-state/baselines/stage_baselines.json",
+    ".orchestrate/pipeline-state/improvement-recommender/state.json",
+    ".orchestrate/audit/findings-ledger.jsonl"
+  ],
+  "outputs": [
+    {"path": ".orchestrate/{{sid}}/continuity-brief/parts/scout-pipeline.json", "role": "primary"}
+  ],
+  "body": {
+    "sections": {
+      "open_risks": [],
+      "baseline_drift": [],
+      "improvement_recommendations": []
+    },
+    "counts": {"audit_high": 0, "audit_critical": 0, "drifts": 0, "recs": 0},
+    "conflicts_detected": [],
+    "confidence_local": 0.0
+  }
+}

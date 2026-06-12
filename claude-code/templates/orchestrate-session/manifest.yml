@@ -1,0 +1,1365 @@
+# Deterministic Session Artifact Manifest
+# ----------------------------------------
+# Single source of truth for what every auto-orchestrate session MUST produce.
+# Read by:
+#   - claude-code/commands/auto-orchestrate.md (orchestration steps reference rule IDs)
+#   - templates/orchestrate-session/check-completeness.py (validator)
+# Rule shape:
+#   id            stable identifier; cited from orchestrator/agents (e.g. ART-S0-002)
+#   path          glob relative to .orchestrate/<sid>/; {placeholders} expand below
+#   template      path under templates/orchestrate-session/ used to seed the file
+#   schema        JSON-schema (under schemas/) that the artifact MUST validate against,
+#                 or "markdown" for prose artifacts
+#   owner         agent or skill responsible for writing
+#   cardinality   one | one-per-deliverable | one-per-task | one-per-stage |
+#                 one-per-category | one-per-gate | one-per-process | one-or-more
+#   required      true | false  (false only for purely event-driven artifacts where
+#                 absence is itself a valid state — currently NONE are false)
+#   when          optional human-readable description of when this fires
+# Placeholders:
+#   {sid}         session id
+#   {deliverable} D-NN identifier
+#   {task}        DNN-TN identifier
+#   {stage}       stage number (0|1|2|3|4|4.5|5|6)
+#   {category}    stage-6 doc category (api|integration|ops-runbook|adr|user-guide|changelog)
+#   {gate}        gate identifier (intent-review|scope-lock|...)
+#   {process}     meeting / process identifier (p-027|p-028|...)
+#   {ts}          ISO-8601 compact timestamp YYYYMMDDTHHMMSSZ
+#   {date}        ISO-8601 date YYYY-MM-DD
+
+schema_version: "1.0.0"
+
+rules:
+
+  # ---------------- session-root ----------------
+  - id: ART-ROOT-001
+    path: checkpoint.json
+    template: session/checkpoint.json
+    schema: schemas/checkpoint.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+    when: session start; updated after every iteration
+
+  - id: ART-ROOT-002
+    path: MANIFEST.jsonl
+    template: session/MANIFEST.jsonl
+    schema: schemas/manifest-entry.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+    when: append one line per artifact write
+
+  - id: ART-ROOT-003
+    path: continuity-brief.md
+    template: session/continuity-brief.md
+    schema: markdown
+    owner: continuity-scout
+    cardinality: one
+    required: true
+    when: Pre-P1; produced by the continuity-scout consolidator after CONT-007 fan-out
+
+  - id: ART-ROOT-003a
+    path: continuity-brief/parts/scout-jsonl.json
+    template: session/continuity-brief-parts/scout-jsonl.json
+    schema: schemas/continuity-brief-part.schema.json
+    owner: scout-jsonl
+    cardinality: one
+    required: true
+    when: Step -0.5; CONT-007 / SCOUT-FANOUT-001 — domain JSONL stores partial
+
+  - id: ART-ROOT-003b
+    path: continuity-brief/parts/scout-sessions.json
+    template: session/continuity-brief-parts/scout-sessions.json
+    schema: schemas/continuity-brief-part.schema.json
+    owner: scout-sessions
+    cardinality: one
+    required: true
+    when: Step -0.5; CONT-007 / SCOUT-FANOUT-001 — 3 newest prior sessions partial
+
+  - id: ART-ROOT-003c
+    path: continuity-brief/parts/scout-pipeline.json
+    template: session/continuity-brief-parts/scout-pipeline.json
+    schema: schemas/continuity-brief-part.schema.json
+    owner: scout-pipeline
+    cardinality: one
+    required: true
+    when: Step -0.5; CONT-007 / SCOUT-FANOUT-001 — baselines + audit ledger partial
+
+  - id: ART-ROOT-003d
+    path: continuity-brief/parts/scout-context.json
+    template: session/continuity-brief-parts/scout-context.json
+    schema: schemas/continuity-brief-part.schema.json
+    owner: scout-context
+    cardinality: one
+    required: true
+    when: Step -0.5; CONT-007 / SCOUT-FANOUT-001 — user prefs + codebase analysis partial
+
+  - id: ART-ROOT-004
+    path: raid-log.json
+    template: session/raid-log.json
+    schema: schemas/raid-log.schema.json
+    owner: raid-logger
+    cardinality: one
+    required: true
+    when: seeded at P2; appended throughout
+
+  - id: ART-ROOT-005
+    path: proposed-tasks.json
+    template: session/proposed-tasks.json
+    schema: schemas/proposed-tasks.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+    when: merged at end of Stage 1
+
+  # ---------------- planning/ ----------------
+  - id: ART-PLAN-001
+    path: planning/P1-intent-brief.md
+    template: planning/P1-intent-brief.md
+    schema: markdown
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-002
+    path: planning/p1-source-requirements.md
+    template: planning/p1-source-requirements.md
+    schema: markdown
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-003
+    path: planning/p1-source-architecture.md
+    template: planning/p1-source-architecture.md
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-004
+    path: planning/P2-scope-contract.md
+    template: planning/P2-scope-contract.md
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-005
+    path: planning/P2-dod-review.md
+    template: planning/P2-dod-review.md
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-006
+    path: planning/P2-appsec-scope-review.md
+    template: planning/P2-appsec-scope-review.md
+    schema: markdown
+    owner: security-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-007
+    path: planning/P2-sre-metrics-review.md
+    template: planning/P2-sre-metrics-review.md
+    schema: markdown
+    owner: sre
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-008
+    path: planning/P3-dependency-charter.md
+    template: planning/P3-dependency-charter.md
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-009
+    path: planning/P3-critical-path-review.md
+    template: planning/P3-critical-path-review.md
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-010
+    path: planning/P3-conflict-resolution.md
+    template: planning/P3-conflict-resolution.md
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-011
+    path: planning/P4-stories.md
+    template: planning/P4-stories.md
+    schema: markdown
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-012
+    path: planning/P4-feasibility.md
+    template: planning/P4-feasibility.md
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-013
+    path: planning/P4-dod-verification.md
+    template: planning/P4-dod-verification.md
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-014
+    path: planning/P4-sprint-kickoff-brief.md
+    template: planning/P4-sprint-kickoff-brief.md
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-PLAN-015
+    path: planning/sprint-kickoff-receipt.json
+    template: planning/sprint-kickoff-receipt.json
+    schema: schemas/sprint-kickoff-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  # ---------------- planning/ research-pool sidecars (PLAN-FANOUT-001) ----------------
+  # 16 entries: 4 per planning phase (P1-P4). Each phase spawns 4 specialist
+  # researchers in parallel; each emits a JSON sidecar consumed by the phase
+  # owner during synthesis. Disabled under --sequential-planning.
+
+  - id: ART-PLAN-P1-R1
+    path: planning/P1/research/R1-outcome-cost.json
+    template: planning/P1/research/R1-outcome-cost.json
+    schema: markdown
+    owner: product-manager
+    cardinality: one
+    required: true
+    when: P1 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P1-R2
+    path: planning/P1/research/R2-beneficiaries.json
+    template: planning/P1/research/R2-beneficiaries.json
+    schema: markdown
+    owner: researcher
+    cardinality: one
+    required: true
+    when: P1 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P1-R3
+    path: planning/P1/research/R3-strategic-context.json
+    template: planning/P1/research/R3-strategic-context.json
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one
+    required: true
+    when: P1 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P1-R4
+    path: planning/P1/research/R4-boundaries.json
+    template: planning/P1/research/R4-boundaries.json
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+    when: P1 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P2-R1
+    path: planning/P2/research/R1-deliverables-exclusions.json
+    template: planning/P2/research/R1-deliverables-exclusions.json
+    schema: markdown
+    owner: product-manager
+    cardinality: one
+    required: true
+    when: P2 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P2-R2
+    path: planning/P2/research/R2-dod.json
+    template: planning/P2/research/R2-dod.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one
+    required: true
+    when: P2 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P2-R3
+    path: planning/P2/research/R3-success-metrics.json
+    template: planning/P2/research/R3-success-metrics.json
+    schema: markdown
+    owner: sre
+    cardinality: one
+    required: true
+    when: P2 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P2-R4
+    path: planning/P2/research/R4-assumptions-risks.json
+    template: planning/P2/research/R4-assumptions-risks.json
+    schema: markdown
+    owner: security-engineer
+    cardinality: one
+    required: true
+    when: P2 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P3-R1
+    path: planning/P3/research/R1-dependency-register.json
+    template: planning/P3/research/R1-dependency-register.json
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+    when: P3 Research Pool; PLAN-FANOUT-001 active (default); carries dependency-analyzer skill invocation
+
+  - id: ART-PLAN-P3-R2
+    path: planning/P3/research/R2-shared-resources.json
+    template: planning/P3/research/R2-shared-resources.json
+    schema: markdown
+    owner: infra-engineer
+    cardinality: one
+    required: true
+    when: P3 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P3-R3
+    path: planning/P3/research/R3-critical-path.json
+    template: planning/P3/research/R3-critical-path.json
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one
+    required: true
+    when: P3 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P3-R4
+    path: planning/P3/research/R4-communication.json
+    template: planning/P3/research/R4-communication.json
+    schema: markdown
+    owner: engineering-manager
+    cardinality: one
+    required: true
+    when: P3 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P4-R1
+    path: planning/P4/research/R1-sprint-goal-intent.json
+    template: planning/P4/research/R1-sprint-goal-intent.json
+    schema: markdown
+    owner: engineering-manager
+    cardinality: one
+    required: true
+    when: P4 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P4-R2
+    path: planning/P4/research/R2-stories-ac.json
+    template: planning/P4/research/R2-stories-ac.json
+    schema: markdown
+    owner: product-manager
+    cardinality: one
+    required: true
+    when: P4 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P4-R3
+    path: planning/P4/research/R3-sprint-dependencies.json
+    template: planning/P4/research/R3-sprint-dependencies.json
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+    when: P4 Research Pool; PLAN-FANOUT-001 active (default)
+
+  - id: ART-PLAN-P4-R4
+    path: planning/P4/research/R4-sprint-dod.json
+    template: planning/P4/research/R4-sprint-dod.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one
+    required: true
+    when: P4 Research Pool; PLAN-FANOUT-001 active (default)
+
+  # ---------------- stage-0 ----------------
+  - id: ART-S0-001
+    path: stage-0/{date}_research-project-wide.md
+    template: stage-0/research-project-wide.md
+    schema: markdown
+    owner: researcher
+    cardinality: one
+    required: true
+
+  - id: ART-S0-002
+    path: stage-0/stage-receipt.json
+    template: stage-0/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S0-003
+    path: stage-0/{deliverable}/research.md
+    template: stage-0/deliverable-research.md
+    schema: markdown
+    owner: researcher
+    cardinality: one-per-deliverable
+    required: true
+    when: MUST exist for every D in proposed-tasks.json
+
+  - id: ART-S0-004
+    path: stage-0/{deliverable}/stage-receipt.json
+    template: stage-0/deliverable-stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one-per-deliverable
+    required: true
+
+  # ---------------- stage-0 research-pool sidecars (STAGE-0B-FANOUT-001) ----------------
+  # 4 entries: per deliverable, 4 specialist researchers run in parallel and
+  # emit one JSON sidecar each consumed by the synthesizer (researcher in
+  # synthesis mode) when writing ART-S0-003. Disabled under --legacy-stage-0b.
+
+  - id: ART-S0-003a
+    path: stage-0/{deliverable}/research/R1-domain.json
+    template: stage-0/deliverable-research-R1-domain.json
+    schema: markdown
+    owner: researcher
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 0b Research Pool; STAGE-0B-FANOUT-001 active (default)
+
+  - id: ART-S0-003b
+    path: stage-0/{deliverable}/research/R2-risk.json
+    template: stage-0/deliverable-research-R2-risk.json
+    schema: markdown
+    owner: security-engineer
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 0b Research Pool; STAGE-0B-FANOUT-001 active (default)
+
+  - id: ART-S0-003c
+    path: stage-0/{deliverable}/research/R3-prior-art.json
+    template: stage-0/deliverable-research-R3-prior-art.json
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 0b Research Pool; STAGE-0B-FANOUT-001 active (default)
+
+  - id: ART-S0-003d
+    path: stage-0/{deliverable}/research/R4-integration.json
+    template: stage-0/deliverable-research-R4-integration.json
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 0b Research Pool; STAGE-0B-FANOUT-001 active (default)
+
+  # ---------------- stage-1 ----------------
+  - id: ART-S1-001
+    path: stage-1/stage-receipt.json
+    template: stage-1/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S1-002
+    path: stage-1/proposed-tasks.json
+    template: stage-1/proposed-tasks-merged.json
+    schema: schemas/proposed-tasks.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S1-003
+    path: stage-1/{deliverable}/proposed-tasks.json
+    template: stage-1/deliverable-proposed-tasks.json
+    schema: schemas/proposed-tasks.schema.json
+    owner: product-manager
+    cardinality: one-per-deliverable
+    required: true
+
+  - id: ART-S1-004
+    path: stage-1/{deliverable}/stage-receipt.json
+    template: stage-1/deliverable-stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one-per-deliverable
+    required: true
+
+  - id: ART-S1-005
+    path: stage-1/{deliverable}/gate-approval-decomposition-{deliverable}-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one-per-deliverable
+    required: true
+
+  # ---------------- stage-1 research-pool sidecars (DECOMP-FANOUT-001) ----------------
+  # 4 entries: per deliverable, 4 specialist researchers run in parallel BEFORE
+  # the decomposition Multi-Agent Sync meeting; sidecars are added as
+  # analysis_pool_sidecars to the meeting inputs. Disabled under --sequential-stage-1.
+  # Pool agents are read-only consumers of Stage 0 + P1-P4 outputs; no WebSearch (RESEARCH-BOUNDARY-001).
+
+  - id: ART-S1-R1
+    path: stage-1/{deliverable}/analysis/R1-sizing.json
+    template: stage-1/deliverable-research-R1-sizing.json
+    schema: markdown
+    owner: product-manager
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 1 Analysis Pool; DECOMP-FANOUT-001 active (default)
+
+  - id: ART-S1-R2
+    path: stage-1/{deliverable}/analysis/R2-dependency-graph.json
+    template: stage-1/deliverable-research-R2-dependency-graph.json
+    schema: markdown
+    owner: technical-program-manager
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 1 Analysis Pool; DECOMP-FANOUT-001 active (default)
+
+  - id: ART-S1-R3
+    path: stage-1/{deliverable}/analysis/R3-testability.json
+    template: stage-1/deliverable-research-R3-testability.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 1 Analysis Pool; DECOMP-FANOUT-001 active (default)
+
+  - id: ART-S1-R4
+    path: stage-1/{deliverable}/analysis/R4-coupling.json
+    template: stage-1/deliverable-research-R4-coupling.json
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one-per-deliverable
+    required: true
+    when: Stage 1 Analysis Pool; DECOMP-FANOUT-001 active (default)
+
+  # ---------------- stage-2 ----------------
+  - id: ART-S2-001
+    path: stage-2/stage-receipt.json
+    template: stage-2/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S2-002
+    path: stage-2/{task}/spec.md
+    template: stage-2/task-spec.md
+    schema: markdown
+    owner: spec-creator
+    cardinality: one-per-task
+    required: true
+
+  - id: ART-S2-003
+    path: stage-2/{task}/stage-receipt.json
+    template: stage-2/task-stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: spec-creator
+    cardinality: one-per-task
+    required: true
+
+  - id: ART-S2-004
+    path: stage-2/{task}/gate-approval-task-creation-{task}-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one-per-task
+    required: true
+
+  # ---------------- stage-2 research-pool sidecars (TASK-CREATION-FANOUT-001) ----------------
+  # 4 entries: per story task, 4 specialist researchers run in parallel BEFORE
+  # the spec-creation Multi-Agent Sync meeting; sidecars are added as
+  # analysis_pool_sidecars to the meeting inputs. Disabled under --sequential-stage-2.
+  # Pool agents are read-only consumers of Stage 0 + P1-P4 + Stage 1 outputs; no WebSearch (RESEARCH-BOUNDARY-001).
+
+  - id: ART-S2-R1
+    path: stage-2/{task}/analysis/R1-patterns.json
+    template: stage-2/task-research-R1-patterns.json
+    schema: markdown
+    owner: staff-principal-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 2 Analysis Pool; TASK-CREATION-FANOUT-001 active (default)
+
+  - id: ART-S2-R2
+    path: stage-2/{task}/analysis/R2-api-contract.json
+    template: stage-2/task-research-R2-api-contract.json
+    schema: markdown
+    owner: software-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 2 Analysis Pool; TASK-CREATION-FANOUT-001 active (default)
+
+  - id: ART-S2-R3
+    path: stage-2/{task}/analysis/R3-test-shape.json
+    template: stage-2/task-research-R3-test-shape.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 2 Analysis Pool; TASK-CREATION-FANOUT-001 active (default)
+
+  - id: ART-S2-R4
+    path: stage-2/{task}/analysis/R4-risk.json
+    template: stage-2/task-research-R4-risk.json
+    schema: markdown
+    owner: security-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 2 Analysis Pool; TASK-CREATION-FANOUT-001 active (default)
+
+  # ---------------- stage-3 ----------------
+  - id: ART-S3-001
+    path: stage-3/stage-receipt.json
+    template: stage-3/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S3-002
+    path: stage-3/changes.md
+    template: stage-3/changes-aggregate.md
+    schema: markdown
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S3-003
+    path: stage-3/{task}/stage-receipt.json
+    template: stage-3/task-stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: software-engineer
+    cardinality: one-per-task
+    required: true
+
+  - id: ART-S3-004
+    path: stage-3/{task}/changes.md
+    template: stage-3/task-changes.md
+    schema: markdown
+    owner: software-engineer
+    cardinality: one-per-task
+    required: true
+
+  # ---------------- stage-3 research-pool sidecars (STAGE-3-FANOUT-001) ----------------
+  # 4 entries: per picked task, 4 specialist researchers run in parallel BEFORE
+  # the software-engineer implementer; sidecars are passed as
+  # extra_inputs.analysis_pool_sidecars. Disabled under --legacy-stage-3.
+  # Pool agents are read-only consumers of Stage 0 + P1-P4 + Stage 2 spec; no WebSearch (RESEARCH-BOUNDARY-001).
+
+  - id: ART-S3-R1
+    path: stage-3/{task}/analysis/R1-interface.json
+    template: stage-3/task-research-R1-interface.json
+    schema: markdown
+    owner: software-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 3 Analysis Pool; STAGE-3-FANOUT-001 active (default)
+
+  - id: ART-S3-R2
+    path: stage-3/{task}/analysis/R2-regression-risk.json
+    template: stage-3/task-research-R2-regression-risk.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 3 Analysis Pool; STAGE-3-FANOUT-001 active (default)
+
+  - id: ART-S3-R3
+    path: stage-3/{task}/analysis/R3-perf.json
+    template: stage-3/task-research-R3-perf.json
+    schema: markdown
+    owner: sre
+    cardinality: one-per-task
+    required: true
+    when: Stage 3 Analysis Pool; STAGE-3-FANOUT-001 active (default)
+
+  - id: ART-S3-R4
+    path: stage-3/{task}/analysis/R4-security.json
+    template: stage-3/task-research-R4-security.json
+    schema: markdown
+    owner: security-engineer
+    cardinality: one-per-task
+    required: true
+    when: Stage 3 Analysis Pool; STAGE-3-FANOUT-001 active (default)
+
+  # ---------------- stage-4 ----------------
+  - id: ART-S4-001
+    path: stage-4/stage-receipt.json
+    template: stage-4/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+    when: always; when no test-only tasks the receipt documents that explicitly
+
+  - id: ART-S4-002
+    path: stage-4/changes.md
+    template: stage-4/changes-aggregate.md
+    schema: markdown
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S4-003
+    path: stage-4/{task}/stage-receipt.json
+    template: stage-4/task-stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: test-writer-pytest
+    cardinality: one-per-task
+    required: false
+    when: only when test-only tasks decomposed; absence valid if stage-4/stage-receipt.json records zero test tasks
+
+  # ---------------- stage-4 research-pool sidecars (STAGE-4-FANOUT-001) ----------------
+  # 4 entries: per picked test task, 4 specialist researchers run in parallel
+  # BEFORE the test-writer-pytest invocation. Disabled under --legacy-stage-4.
+
+  - id: ART-S4-R1
+    path: stage-4/{task}/analysis/R1-coverage-delta.json
+    template: stage-4/task-research-R1-coverage-delta.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-per-task
+    required: false
+    when: Stage 4 Analysis Pool; STAGE-4-FANOUT-001 active (default); only when test-only tasks decomposed
+
+  - id: ART-S4-R2
+    path: stage-4/{task}/analysis/R2-fixtures.json
+    template: stage-4/task-research-R2-fixtures.json
+    schema: markdown
+    owner: software-engineer
+    cardinality: one-per-task
+    required: false
+    when: Stage 4 Analysis Pool; STAGE-4-FANOUT-001 active (default); only when test-only tasks decomposed
+
+  - id: ART-S4-R3
+    path: stage-4/{task}/analysis/R3-adversarial.json
+    template: stage-4/task-research-R3-adversarial.json
+    schema: markdown
+    owner: security-engineer
+    cardinality: one-per-task
+    required: false
+    when: Stage 4 Analysis Pool; STAGE-4-FANOUT-001 active (default); only when test-only tasks decomposed
+
+  - id: ART-S4-R4
+    path: stage-4/{task}/analysis/R4-reliability.json
+    template: stage-4/task-research-R4-reliability.json
+    schema: markdown
+    owner: sre
+    cardinality: one-per-task
+    required: false
+    when: Stage 4 Analysis Pool; STAGE-4-FANOUT-001 active (default); only when test-only tasks decomposed
+
+  # ---------------- stage-4.5 ----------------
+  - id: ART-S45-001
+    path: stage-4.5/codebase-stats.json
+    template: stage-4_5/codebase-stats.json
+    schema: schemas/codebase-stats.schema.json
+    owner: codebase-stats
+    cardinality: one
+    required: true
+
+  - id: ART-S45-002
+    path: stage-4.5/refactor-analyzer.json
+    template: stage-4_5/refactor-analyzer.json
+    schema: schemas/refactor-analyzer.schema.json
+    owner: refactor-analyzer
+    cardinality: one
+    required: true
+
+  - id: ART-S45-003
+    path: stage-4.5/dependency-analyzer.json
+    template: stage-4_5/dependency-analyzer.json
+    schema: schemas/dependency-analyzer.schema.json
+    owner: dependency-analyzer
+    cardinality: one
+    required: true
+
+  - id: ART-S45-004
+    path: stage-4.5/stage-receipt.json
+    template: stage-4_5/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  # Stage 4.5 4th skill output added by STAGE-4-5-FANOUT-001 — security-auditor.
+  # Disabled under --legacy-stage-4-5-3skill (then this entry becomes a no-op).
+  - id: ART-S4-5-005
+    path: stage-4.5/security-auditor.json
+    template: stage-4_5/security-auditor.json
+    schema: markdown
+    owner: security-auditor
+    cardinality: one
+    required: true
+    when: Stage 4.5 4-skill fan-out; STAGE-4-5-FANOUT-001 active (default)
+
+  # ---------------- stage-5 ----------------
+  - id: ART-S5-001
+    path: stage-5/validation-report.json
+    template: stage-5/validation-report.json
+    schema: schemas/validation-report.schema.json
+    owner: validator
+    cardinality: one
+    required: true
+
+  - id: ART-S5-002
+    path: stage-5/validation-report.md
+    template: stage-5/validation-report.md
+    schema: markdown
+    owner: validator
+    cardinality: one
+    required: true
+
+  - id: ART-S5-003
+    path: stage-5/compliance-report.json
+    template: stage-5/compliance-report.json
+    schema: schemas/compliance-report.schema.json
+    owner: spec-compliance
+    cardinality: one
+    required: true
+
+  - id: ART-S5-004
+    path: stage-5/stage-receipt.json
+    template: stage-5/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  # ---------------- stage-5 pre-meeting analysis-pool sidecars (STAGE-5-FANOUT-001) ----------------
+  # 4 entries: 4 specialist pre-validation analysis agents run in parallel BEFORE
+  # the VALIDATION-REASONING-001 Multi-Agent Sync meeting. Session-level
+  # (cardinality: one). Disabled under --sequential-stage-5.
+  # Pool agents are read-only consumers of Stage 0 + P1-P4 + Stage 2/3/4 outputs;
+  # no WebSearch (RESEARCH-BOUNDARY-001).
+
+  - id: ART-S5-R1
+    path: stage-5/validation/analysis/R1-security-scan.json
+    template: stage-5/validation-research-R1-security-scan.json
+    schema: markdown
+    owner: security-engineer
+    cardinality: one
+    required: true
+    when: Stage 5 Pre-Validation Pool; STAGE-5-FANOUT-001 active (default)
+
+  - id: ART-S5-R2
+    path: stage-5/validation/analysis/R2-test-pass.json
+    template: stage-5/validation-research-R2-test-pass.json
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one
+    required: true
+    when: Stage 5 Pre-Validation Pool; STAGE-5-FANOUT-001 active (default)
+
+  - id: ART-S5-R3
+    path: stage-5/validation/analysis/R3-release-readiness.json
+    template: stage-5/validation-research-R3-release-readiness.json
+    schema: markdown
+    owner: sre
+    cardinality: one
+    required: true
+    when: Stage 5 Pre-Validation Pool; STAGE-5-FANOUT-001 active (default)
+
+  - id: ART-S5-R4
+    path: stage-5/validation/analysis/R4-compliance-snapshot.json
+    template: stage-5/validation-research-R4-compliance-snapshot.json
+    schema: markdown
+    owner: auditor
+    cardinality: one
+    required: true
+    when: Stage 5 Pre-Validation Pool; STAGE-5-FANOUT-001 active (default)
+
+  # ---------------- stage-6 (six categories, all mandatory) ----------------
+  - id: ART-S6-001
+    path: stage-6/api/*.md
+    template: stage-6/api-topic.md
+    schema: markdown
+    owner: technical-writer
+    cardinality: one-or-more
+    required: true
+
+  - id: ART-S6-002
+    path: stage-6/integration/*.md
+    template: stage-6/integration-topic.md
+    schema: markdown
+    owner: technical-writer
+    cardinality: one-or-more
+    required: true
+
+  - id: ART-S6-003
+    path: stage-6/ops-runbook/*.md
+    template: stage-6/ops-runbook-topic.md
+    schema: markdown
+    owner: technical-writer
+    cardinality: one-or-more
+    required: true
+    when: produce at least no-ops-impact.md if subsystem has no ops surface
+
+  - id: ART-S6-004
+    path: stage-6/adr/ADR-*.md
+    template: stage-6/adr-topic.md
+    schema: markdown
+    owner: adr-publisher
+    cardinality: one-or-more
+    required: true
+
+  - id: ART-S6-005
+    path: stage-6/user-guide/*.md
+    template: stage-6/user-guide-topic.md
+    schema: markdown
+    owner: technical-writer
+    cardinality: one-or-more
+    required: true
+    when: produce at least no-user-surface.md if subsystem is internal
+
+  - id: ART-S6-006
+    path: stage-6/changelog/*.md
+    template: stage-6/changelog-topic.md
+    schema: markdown
+    owner: release-notes-generator
+    cardinality: one-or-more
+    required: true
+
+  - id: ART-S6-007
+    path: stage-6/changes.md
+    template: stage-6/changes-aggregate.md
+    schema: markdown
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-S6-008
+    path: stage-6/stage-receipt.json
+    template: stage-6/stage-receipt.json
+    schema: schemas/stage-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  # ---------------- gates ----------------
+  - id: ART-GATE-001
+    path: gates/gate-history.jsonl
+    template: gates/gate-history.jsonl
+    schema: schemas/gate-history-entry.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-002
+    path: gates/gate-approval-intent-review-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-003
+    path: gates/gate-approval-scope-lock-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-004
+    path: gates/gate-approval-dependency-acceptance-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-005
+    path: gates/gate-approval-sprint-readiness-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-006
+    path: gates/gate-approval-decomposition-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-007
+    path: gates/gate-approval-task-creation-*.json
+    template: gates/gate-approval.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-008
+    path: gates/gate-pending-compliance-verdict.json
+    template: gates/gate-pending.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-GATE-009
+    path: gates/gate-completeness-*.json
+    template: gates/gate-completeness.json
+    schema: schemas/gate.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+    when: written by check-completeness.py at Step 7
+
+  # ---------------- handovers (fixed minimum set per stage boundary) ----------------
+  - id: ART-HAND-001
+    path: handovers/handover-researcher-to-product-manager-stage-1.json
+    template: handovers/handover.json
+    schema: schemas/handover.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-HAND-002
+    path: handovers/handover-product-manager-to-software-engineer-stage-2.json
+    template: handovers/handover.json
+    schema: schemas/handover.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-HAND-003
+    path: handovers/handover-spec-creator-to-software-engineer-stage-3.json
+    template: handovers/handover.json
+    schema: schemas/handover.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-HAND-004
+    path: handovers/handover-software-engineer-to-codebase-stats-stage-4.5.json
+    template: handovers/handover.json
+    schema: schemas/handover.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-HAND-005
+    path: handovers/handover-codebase-stats-to-validator-stage-5.json
+    template: handovers/handover.json
+    schema: schemas/handover.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-HAND-006
+    path: handovers/handover-validator-to-technical-writer-stage-6.json
+    template: handovers/handover.json
+    schema: schemas/handover.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  # ---------------- meetings (canonical ceremonies + per-stage Multi-Agent Syncs) ----------------
+  - id: ART-MTG-001
+    path: meetings/minutes-intent-review-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-002
+    path: meetings/minutes-scope-lock-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-003
+    path: meetings/minutes-dependency-acceptance-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: technical-program-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-004
+    path: meetings/minutes-sprint-readiness-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-005
+    path: meetings/minutes-decomposition-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-006
+    path: meetings/minutes-task-creation-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: software-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-007
+    path: meetings/minutes-validation-multi-agent-sync-*.json
+    template: meetings/minutes-multi-agent-sync.json
+    schema: schemas/meeting-minutes.schema.json
+    owner: qa-engineer
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-008
+    path: meetings/meeting-p-027-sprint-review-*.json
+    template: meetings/meeting-ceremony.json
+    schema: schemas/meeting-ceremony.schema.json
+    owner: engineering-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-009
+    path: meetings/meeting-p-028-sprint-retro-*.json
+    template: meetings/meeting-ceremony.json
+    schema: schemas/meeting-ceremony.schema.json
+    owner: engineering-manager
+    cardinality: one
+    required: true
+
+  - id: ART-MTG-010
+    path: meetings/meeting-p-029-backlog-refinement-*.json
+    template: meetings/meeting-ceremony.json
+    schema: schemas/meeting-ceremony.schema.json
+    owner: product-manager
+    cardinality: one
+    required: true
+
+  # ---------------- domain-reviews (per stage 2/3/5/6 — baseline always written) ----------------
+  # Owner is the baseline writer per MAIN-017. The orchestrator may additionally
+  # spawn ACT-001..ACT-012 matched domain agents (security-engineer, sre,
+  # data-engineer, infra-engineer, ml-engineer, etc.) which write sibling files
+  # in this folder. See _shared/protocols/agent-activation.md.
+  - id: ART-DR-002
+    path: domain-reviews/*-stage-2*.md
+    template: domain-reviews/domain-review.md
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-or-more
+    required: true
+    when: always; if no ACT-001..ACT-012 rule fires, qa-engineer writes qa-engineer-stage-2-baseline.md
+
+  - id: ART-DR-003
+    path: domain-reviews/*-stage-3*.md
+    template: domain-reviews/domain-review.md
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-or-more
+    required: true
+
+  - id: ART-DR-005
+    path: domain-reviews/*-stage-5*.md
+    template: domain-reviews/domain-review.md
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-or-more
+    required: true
+
+  - id: ART-DR-006
+    path: domain-reviews/*-stage-6*.md
+    template: domain-reviews/domain-review.md
+    schema: markdown
+    owner: qa-engineer
+    cardinality: one-or-more
+    required: true
+
+  # ---------------- phase-receipts (every stage close + every fired sub-phase) ----------------
+  - id: ART-PR-001
+    path: phase-receipts/phase-stage-0-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-002
+    path: phase-receipts/phase-stage-1-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-003
+    path: phase-receipts/phase-stage-2-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-004
+    path: phase-receipts/phase-stage-3-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-005
+    path: phase-receipts/phase-stage-4-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-006
+    path: phase-receipts/phase-stage-4.5-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-007
+    path: phase-receipts/phase-stage-5-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  - id: ART-PR-008
+    path: phase-receipts/phase-stage-6-*.json
+    template: phase-receipts/phase-receipt.json
+    schema: schemas/phase-receipt.schema.json
+    owner: orchestrator
+    cardinality: one
+    required: true
+
+  # ---------------- reasoning-traces (one per reasoning gate emission) ----------------
+  - id: ART-RT-001
+    path: reasoning-traces/reasoning-trace-intent-review-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+  - id: ART-RT-002
+    path: reasoning-traces/reasoning-trace-scope-lock-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+  - id: ART-RT-003
+    path: reasoning-traces/reasoning-trace-dependency-acceptance-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+  - id: ART-RT-004
+    path: reasoning-traces/reasoning-trace-sprint-readiness-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+  - id: ART-RT-005
+    path: reasoning-traces/reasoning-trace-decomposition-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+  - id: ART-RT-006
+    path: reasoning-traces/reasoning-trace-task-creation-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+  - id: ART-RT-007
+    path: reasoning-traces/reasoning-trace-validation-*.json
+    template: reasoning-traces/reasoning-trace.json
+    schema: schemas/reasoning-trace.schema.json
+    owner: meta-reasoner
+    cardinality: one
+    required: true
+
+# ---- cross-cardinality consistency checks (the completeness checker runs these) ----
+consistency_checks:
+  - id: CONS-001
+    description: |
+      Every D in proposed-tasks.json#tasks[].deliverable must have
+      stage-0/<D>/research.md and stage-0/<D>/stage-receipt.json and
+      stage-1/<D>/proposed-tasks.json and stage-1/<D>/stage-receipt.json and
+      stage-1/<D>/gate-approval-decomposition-<D>-*.json.
+
+  - id: CONS-002
+    description: |
+      Every T in proposed-tasks.json#tasks[].id must have
+      stage-2/<T>/spec.md and stage-2/<T>/stage-receipt.json and
+      stage-2/<T>/gate-approval-task-creation-<T>-*.json and
+      stage-3/<T>/stage-receipt.json and stage-3/<T>/changes.md.
+
+  - id: CONS-003
+    description: |
+      Every stage that opens MUST have a matching phase-receipt under
+      phase-receipts/phase-stage-<N>-*.json. Sub-phase receipts
+      (phase-5v-*, phase-5e-*, phase-5q-*, phase-5s-*, phase-5i-*,
+      phase-5d-*) are added only when those sub-phases fire.
+
+  - id: CONS-004
+    description: |
+      Every stage in {2, 3, 5, 6} MUST have at least one real review under
+      domain-reviews/*-stage-<N>*.md. Real reviews include both
+      activation-rule-fired (per agents[*].activation_rules[]) and baseline
+      qa-engineer reviews emitted by MAIN-017 Stage-Close Protocol Part 1.2
+      when zero rules fire. Sentinel "*-none-*" files DO NOT count
+      (ARTIFACT-COMPLETENESS-001).
+
+  - id: CONS-005
+    description: |
+      meetings/ MUST contain at least one real meeting receipt for the session.
+      Real receipts include canonical meetings (P-020/026/027/028/029/076),
+      reasoning-gate Multi-Agent Sync minutes, and baseline check-ins
+      emitted by MAIN-017 Stage-Close Protocol Part 1.4. Sentinel
+      "*-none-*" files DO NOT count (ARTIFACT-COMPLETENESS-001).
+
+  - id: CONS-006
+    description: |
+      reasoning-traces/ MUST contain at least one trace per session. Real
+      traces come from meta-reasoner invocations; baseline traces
+      (stage-<N>-baseline.json) are written by MAIN-017 Stage-Close
+      Protocol Part 1.3 when meta-reasoner was not invoked.
+
+  - id: CONS-007
+    description: |
+      session_root MUST live under .orchestrate/ (LAYOUT-GATE-001 /
+      ORCHESTRATE-FLAT-001). Sessions found at the repo root violate the
+      unified layout; check-completeness.py --allow-unrooted bypasses
+      this check for forensic standalone runs. auto-orchestrate.md
+      Step 3.0a self-heals via `mv <sid> .orchestrate/<sid>` at next spawn.

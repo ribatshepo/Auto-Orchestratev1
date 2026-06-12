@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "validation_report",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "produced_by": "validator",
+  "produced_at": "{{produced_at}}",
+  "multi_agent_sync": {
+    "participants": [
+      {"agent": "qa-engineer", "verdict": "PASS", "confidence": 0.0},
+      {"agent": "validator", "verdict": "PASS", "confidence": 0.0},
+      {"agent": "security-engineer", "verdict": "PASS", "confidence": 0.0},
+      {"agent": "auditor", "verdict": "PASS", "confidence": 0.0}
+    ],
+    "aggregate_confidence": 0.0,
+    "recommended_verdict": "{{verdict}}"
+  },
+  "sub_question_results": {
+    "S1_spec_compliance": {"verdict": "PASS", "score": 0.0, "evidence": ""},
+    "S2_user_journeys":   {"verdict": "PASS", "score": 0.0, "evidence": ""},
+    "S3_eng_std_001":     {"verdict": "PASS", "score": 0.0, "evidence": ""},
+    "S4_docker_validator":{"verdict": "PASS", "score": 0.0, "evidence": ""},
+    "S5_security":        {"verdict": "PASS", "score": 0.0, "evidence": ""},
+    "S6_release_flag":    {"verdict": "PASS", "score": 0.0, "evidence": ""}
+  },
+  "test_results": {"tests_passed": 0, "tests_failed": 0},
+  "spec_compliance": {"score": 0.0, "threshold": 0.95, "pass": true},
+  "security": {"bandit_HIGH": 0, "bandit_MEDIUM": 0}
+}

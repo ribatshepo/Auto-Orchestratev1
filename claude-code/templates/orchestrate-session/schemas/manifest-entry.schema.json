@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/manifest-entry.json",
+  "title": "MANIFEST.jsonl entry",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "artifact_path", "rule_id"],
+  "properties": {
+    "artifact_type": {"const": "manifest_entry"},
+    "artifact_path": {"type": "string"},
+    "artifact_kind": {"type": "string"},
+    "rule_id":       {"type": "string"},
+    "sha256":        {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

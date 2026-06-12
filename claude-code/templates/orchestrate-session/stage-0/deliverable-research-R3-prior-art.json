@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_0b_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 0,
+  "substage": "0b",
+  "role": "R3",
+  "focus": "prior-art-patterns",
+  "producer_agent": "staff-principal-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "applicable_patterns": [
+      {
+        "pattern_id": "",
+        "source": "continuity-brief|domain/pattern_library|external",
+        "when_to_apply": "",
+        "anti_patterns_to_avoid": []
+      }
+    ],
+    "architectural_precedents": [],
+    "internal_codebase_references": []
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

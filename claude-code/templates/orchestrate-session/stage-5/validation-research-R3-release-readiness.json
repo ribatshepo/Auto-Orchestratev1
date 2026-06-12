@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_5_research_sidecar",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "role": "R3",
+  "focus": "pre-validation-release-readiness",
+  "producer_agent": "sre",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "release_flag_active": false,
+    "slo_baseline_check": {
+      "slos_defined": 0,
+      "missing_slos": [],
+      "current_error_budget_pct": 100
+    },
+    "runbook_completeness": {
+      "required": false,
+      "present": false,
+      "gaps": []
+    },
+    "observability_coverage": {
+      "logging": "complete|partial|missing",
+      "tracing": "complete|partial|missing",
+      "metrics": "complete|partial|missing",
+      "alerts_defined": 0
+    }
+  },
+  "sources": ["stage-3/", "stage-6/ops-runbook/"],
+  "confidence_local": 0.0
+}

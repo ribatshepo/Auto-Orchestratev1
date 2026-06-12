@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P4",
+  "role": "R1",
+  "focus": "sprint-goal-intent-trace",
+  "producer_agent": "engineering-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "sprint_goal": "",
+    "intent_trace": {
+      "project_intent": "",
+      "scope_deliverable": "",
+      "sprint_goal": ""
+    }
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

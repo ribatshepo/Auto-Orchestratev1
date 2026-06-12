@@ -1,0 +1,1 @@
+{"schema_version":"1.0.0","artifact_type":"gate_history_entry","session_id":"{{sid}}","produced_at":"{{produced_at}}","gate_id":"{{gate_id}}","verdict":"{{verdict}}","confidence":0.0,"decided_by":"reasoning-gate","artifact_path":"gates/gate-approval-{{gate_id}}-{{ts}}.json"}

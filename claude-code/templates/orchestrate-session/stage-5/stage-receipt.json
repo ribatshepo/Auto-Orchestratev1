@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "stage_name": "validation",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "verdict": "{{verdict}}",
+  "key_metrics": {
+    "tests_passed": 0,
+    "spec_compliance": 0.0,
+    "eng_std_001": 0.0,
+    "security_HIGH": 0,
+    "security_MEDIUM": 0,
+    "cycles": 0,
+    "aggregate_confidence": 0.0
+  },
+  "artifacts": {
+    "validation_report": ".orchestrate/{{sid}}/stage-5/validation-report.json",
+    "compliance_report": ".orchestrate/{{sid}}/stage-5/compliance-report.json"
+  },
+  "next_stage": "6",
+  "proceed": true
+}

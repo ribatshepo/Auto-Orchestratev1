@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_5_research_sidecar",
+  "session_id": "{{sid}}",
+  "stage": 5,
+  "role": "R2",
+  "focus": "pre-validation-test-pass",
+  "producer_agent": "qa-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "test_summary": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "flaky_count": 0
+    },
+    "coverage_delta_vs_stage_4_plan": {
+      "planned_pct": 0,
+      "actual_pct": 0,
+      "delta_pct": 0
+    },
+    "failing_tests": [
+      {"test_path": "", "failure_signature": "", "blocking": true}
+    ],
+    "flaky_signals": []
+  },
+  "sources": ["stage-4/"],
+  "confidence_local": 0.0
+}

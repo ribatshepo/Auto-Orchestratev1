@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/meeting-minutes.json",
+  "title": "Multi-Agent Sync Minutes",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "meeting_id", "facilitator"],
+  "properties": {
+    "artifact_type": {"const": "meeting_minutes"},
+    "meeting_id":    {"type": "string"},
+    "meeting_type":  {"type": "string"},
+    "facilitator":   {"type": "string"},
+    "attendees":     {"type": "array", "items": {"type": "string"}},
+    "sub_questions": {"type": "array"},
+    "participant_votes": {"type": "object"},
+    "overall_aggregate_confidence": {"type": "number"}
+  }
+}

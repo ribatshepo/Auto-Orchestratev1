@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 3,
+  "stage_name": "implementation",
+  "status": "completed",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "total_tasks": 0,
+  "completed_tasks": 0,
+  "waves_executed": 0,
+  "test_summary": {
+    "tests_passed": 0,
+    "tests_failed": 0,
+    "tests_skipped": 0
+  },
+  "files_created": [],
+  "files_modified": [],
+  "test_files_created": [],
+  "eng_std_001_global_check": "PASS",
+  "packages_added_to_pyproject": [],
+  "handover_to": ".orchestrate/{{sid}}/handovers/handover-software-engineer-to-codebase-stats-stage-4.5.json"
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "continuity_brief_part",
+  "artifact_id": "continuity-part-jsonl-{{sid}}-{{ts}}",
+  "session_id": "{{sid}}",
+  "stage": "cross-session",
+  "producer_agent": "scout-jsonl",
+  "created_at": "{{produced_at}}",
+  "status": "sentinel",
+  "verdict": "n/a",
+  "inputs": [
+    ".orchestrate/domain/research_ledger.jsonl",
+    ".orchestrate/domain/decision_log.jsonl",
+    ".orchestrate/domain/pattern_library.jsonl",
+    ".orchestrate/domain/fix_registry.jsonl"
+  ],
+  "outputs": [
+    {"path": ".orchestrate/{{sid}}/continuity-brief/parts/scout-jsonl.json", "role": "primary"}
+  ],
+  "body": {
+    "sections": {
+      "prior_decisions": [],
+      "reusable_patterns": [],
+      "known_fixes": []
+    },
+    "counts": {"decisions": 0, "patterns": 0, "fixes": 0},
+    "conflicts_detected": [],
+    "confidence_local": 0.0
+  }
+}

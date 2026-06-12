@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/sprint-kickoff-receipt.json",
+  "title": "Sprint Kickoff Receipt",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "sprint_goal", "stories_committed"],
+  "properties": {
+    "artifact_type":   {"const": "sprint_kickoff_receipt"},
+    "sprint_goal":     {"type": "string"},
+    "stories_committed": {"type": "array"},
+    "capacity_check":  {"type": "object"},
+    "planning_artifacts": {"type": "object"}
+  }
+}

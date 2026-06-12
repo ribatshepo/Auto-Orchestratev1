@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_2_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 2,
+  "role": "R3",
+  "focus": "test-shape",
+  "producer_agent": "qa-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "test_stubs": [
+      {
+        "stub_name": "",
+        "covers_ac": "",
+        "test_type": "unit|integration|e2e",
+        "mocks": [],
+        "fixtures": []
+      }
+    ],
+    "integration_boundaries": [],
+    "testing_contract_gaps": [
+      {"interface": "", "missing_test_file": "", "severity": "HIGH|MED|LOW"}
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

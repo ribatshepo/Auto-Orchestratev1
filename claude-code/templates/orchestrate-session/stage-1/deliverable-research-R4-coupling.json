@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_1_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 1,
+  "role": "R4",
+  "focus": "coupling-shared-state",
+  "producer_agent": "staff-principal-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "shared_state_smells": [
+      {
+        "story_ids": [],
+        "smell": "",
+        "severity": "HIGH|MED|LOW",
+        "proposed_remediation": ""
+      }
+    ],
+    "proposed_interface_boundaries": [
+      {
+        "boundary_name": "",
+        "splits_stories": [],
+        "rationale": ""
+      }
+    ]
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

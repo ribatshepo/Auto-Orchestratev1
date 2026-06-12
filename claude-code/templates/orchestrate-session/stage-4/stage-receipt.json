@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 4,
+  "stage_name": "tests",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "test_only_tasks_decomposed": 0,
+  "explanation": "When zero test-only tasks are decomposed, this receipt explicitly records that fact. The Stage-3 task receipts still cover unit-test coverage via test_files_created; Stage 4 only runs when integration / e2e / coverage-only tasks exist in proposed-tasks.json.",
+  "coverage_summary": {
+    "lines_total": 0,
+    "lines_covered": 0,
+    "coverage_pct": 0.0
+  },
+  "test_summary": {
+    "tests_passed": 0,
+    "tests_failed": 0,
+    "tests_skipped": 0
+  },
+  "test_files_created": [],
+  "files_modified": [],
+  "errors": [],
+  "warnings": []
+}

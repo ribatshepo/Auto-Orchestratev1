@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 0,
+  "substage": "0b",
+  "produced_by": "researcher",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "artifact": ".orchestrate/{{sid}}/stage-0/{{deliverable}}/research.md",
+  "searches_performed": 0,
+  "key_findings": [],
+  "errors": [],
+  "warnings": []
+}

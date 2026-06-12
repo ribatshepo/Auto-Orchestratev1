@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": "4.5",
+  "stage_name": "code-health",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "verdict": "{{verdict}}",
+  "skills_run": ["codebase-stats", "refactor-analyzer", "dependency-analyzer"],
+  "summary": {
+    "codebase_stats": {},
+    "refactor_analyzer": {},
+    "dependency_analyzer": {}
+  },
+  "gate_results": {
+    "governance": "PASS",
+    "eng_std_001": "PASS",
+    "cycle": "PASS",
+    "bandit": "PASS"
+  },
+  "artifacts": {
+    "codebase_stats": ".orchestrate/{{sid}}/stage-4.5/codebase-stats.json",
+    "refactor_analyzer": ".orchestrate/{{sid}}/stage-4.5/refactor-analyzer.json",
+    "dependency_analyzer": ".orchestrate/{{sid}}/stage-4.5/dependency-analyzer.json"
+  },
+  "next_stage": "5",
+  "proceed": true
+}

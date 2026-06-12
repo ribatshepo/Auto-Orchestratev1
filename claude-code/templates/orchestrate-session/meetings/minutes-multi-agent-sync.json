@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "meeting_minutes",
+  "session_id": "{{sid}}",
+  "meeting_id": "{{meeting_id}}",
+  "meeting_type": "multi-agent-sync",
+  "produced_at": "{{produced_at}}",
+  "facilitator": "{{facilitator}}",
+  "attendees": [],
+  "scope": "{{scope}}",
+  "sub_questions": [],
+  "participant_votes": {},
+  "aggregate_confidence_per_question": {},
+  "overall_aggregate_confidence": 0.0,
+  "key_decisions": [],
+  "caveats_per_deliverable": {},
+  "blockers_surfaced": [],
+  "action_items": []
+}

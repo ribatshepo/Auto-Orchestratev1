@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_0b_research_sidecar",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "stage": 0,
+  "substage": "0b",
+  "role": "R4",
+  "focus": "integration-dependencies",
+  "producer_agent": "technical-program-manager",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "cross_deliverable_dependencies": [
+      {
+        "depends_on_deliverable": "",
+        "interface": "",
+        "synchronization_point": ""
+      }
+    ],
+    "external_integrations": [],
+    "data_contracts": []
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

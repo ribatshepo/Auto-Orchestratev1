@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/envelope.json",
+  "title": "Artifact Envelope",
+  "description": "Common envelope embedded in every JSON artifact under .orchestrate/<sid>/.",
+  "type": "object",
+  "required": ["schema_version", "artifact_type", "session_id", "produced_at"],
+  "properties": {
+    "schema_version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "artifact_type":  {"type": "string"},
+    "session_id":     {"type": "string"},
+    "produced_at":    {"type": "string", "format": "date-time"},
+    "produced_by":    {"type": "string"}
+  }
+}

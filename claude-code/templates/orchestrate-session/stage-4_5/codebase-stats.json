@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "codebase_stats",
+  "session_id": "{{sid}}",
+  "stage": "4.5",
+  "produced_by": "codebase-stats",
+  "produced_at": "{{produced_at}}",
+  "summary": {
+    "files": 0,
+    "loc_total": 0,
+    "complexity_mean": 0.0
+  },
+  "eng_std_001_violations": [],
+  "violation_count": 0,
+  "overall_score": 0.0,
+  "threshold": 0.9,
+  "pass": true,
+  "tech_debt_score": 0.0,
+  "duplication_ratio": 0.0,
+  "per_file_stats": []
+}

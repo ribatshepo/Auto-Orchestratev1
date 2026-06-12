@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/continuity-brief-part.json",
+  "title": "Continuity Brief Part",
+  "description": "Partial continuity-brief artifact produced by one of the four parallel scouts (scout-jsonl, scout-sessions, scout-pipeline, scout-context). The continuity-scout consolidator merges all four parts into the canonical continuity-brief.md. Schema added by CONT-007 / SCOUT-FANOUT-001.",
+  "type": "object",
+  "required": ["schema_version", "artifact_type", "session_id", "stage", "producer_agent", "created_at", "status", "outputs", "body"],
+  "properties": {
+    "schema_version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "artifact_type":  {"const": "continuity_brief_part"},
+    "artifact_id":    {"type": "string"},
+    "session_id":     {"type": "string"},
+    "stage":          {"const": "cross-session"},
+    "producer_agent": {"enum": ["scout-jsonl", "scout-sessions", "scout-pipeline", "scout-context"]},
+    "created_at":     {"type": "string", "format": "date-time"},
+    "status":         {"enum": ["ok", "sentinel"]},
+    "verdict":        {"enum": ["n/a", "PASS", "FAIL"]},
+    "addendum":       {"type": "boolean", "description": "true when written during the pre-Stage-0 refresh (CONT-009)."},
+    "inputs":         {"type": "array", "items": {"type": "string"}},
+    "outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["path", "role"],
+        "properties": {
+          "path": {"type": "string"},
+          "role": {"const": "primary"}
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "body": {
+      "type": "object",
+      "required": ["sections"],
+      "properties": {
+        "sections": {
+          "type": "object",
+          "description": "Each scout populates only the sections it owns. Unowned sections are omitted; the consolidator merges from sibling parts.",
+          "properties": {
+            "prior_decisions":            {"type": "array", "items": {"type": "object"}},
+            "reusable_patterns":          {"type": "array", "items": {"type": "object"}},
+            "known_fixes":                {"type": "array", "items": {"type": "object"}},
+            "recent_outcomes":            {"type": "array", "items": {"type": "object"}},
+            "open_risks":                 {"type": "array", "items": {"type": "object"}},
+            "baseline_drift":             {"type": "array", "items": {"type": "object"}},
+            "improvement_recommendations":{"type": "array", "items": {"type": "object"}},
+            "user_preferences":           {"type": "array", "items": {"type": "object"}},
+            "codebase_conventions":       {"type": "array", "items": {"type": "object"}}
+          },
+          "additionalProperties": false
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "conflicts_detected": {
+          "type": "array",
+          "description": "Local conflicts the scout identified within its own inputs. The consolidator runs meta-reasoner ONCE across the union of all conflicts per CONT-008 — scouts MUST NOT invoke meta-reasoner themselves.",
+          "items": {
+            "type": "object",
+            "required": ["topic", "refs"],
+            "properties": {
+              "topic": {"type": "string"},
+              "refs":  {"type": "array", "items": {"type": "string"}, "minItems": 2},
+              "note":  {"type": "string"}
+            }
+          }
+        },
+        "confidence_local": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

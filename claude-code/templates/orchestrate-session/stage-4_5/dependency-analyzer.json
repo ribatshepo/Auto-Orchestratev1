@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "dependency_analyzer",
+  "session_id": "{{sid}}",
+  "stage": "4.5",
+  "produced_by": "dependency-analyzer",
+  "produced_at": "{{produced_at}}",
+  "summary": {
+    "modules": 0,
+    "edges": 0,
+    "cycles": 0,
+    "layer_violations": 0,
+    "hard_fail": false
+  },
+  "cycles": [],
+  "layer_violations": []
+}

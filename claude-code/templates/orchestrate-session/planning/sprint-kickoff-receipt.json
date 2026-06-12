@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "sprint_kickoff_receipt",
+  "ceremony": "sprint-kickoff",
+  "session_id": "{{sid}}",
+  "produced_at": "{{produced_at}}",
+  "produced_by": "technical-program-manager",
+  "sprint_goal": "{{sprint_goal}}",
+  "story_count": 0,
+  "stories_committed": [],
+  "capacity_check": {
+    "points_estimated": 0,
+    "team_capacity": 0,
+    "ratio": 0.0,
+    "within_capacity": true
+  },
+  "team_commitment_recorded": true,
+  "independence_groups": {},
+  "sprint_dod_eng_std_001_gates": [],
+  "pre_stage_3_gates": [],
+  "kickoff_at": "{{produced_at}}",
+  "planning_artifacts": {
+    "P1": ".orchestrate/{{sid}}/planning/P1-intent-brief.md",
+    "P2": ".orchestrate/{{sid}}/planning/P2-scope-contract.md",
+    "P3": ".orchestrate/{{sid}}/planning/P3-dependency-charter.md",
+    "P4": ".orchestrate/{{sid}}/planning/P4-stories.md"
+  },
+  "gates": {
+    "P3": ".orchestrate/{{sid}}/gates/gate-approval-dependency-acceptance-{{ts}}.json",
+    "P4": ".orchestrate/{{sid}}/gates/gate-approval-sprint-readiness-{{ts}}.json"
+  }
+}

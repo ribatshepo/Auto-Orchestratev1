@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 1,
+  "stage_name": "decomposition",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "gate_verdict": "{{gate_verdict}}",
+  "gate_confidence": 0.0,
+  "gate_decided_by": "reasoning-gate",
+  "summary": {
+    "task_count": 0,
+    "story_points": 0,
+    "independence_groups": 0,
+    "dependency_edges": 0,
+    "parallel_cap": 5
+  },
+  "outputs": {
+    "merged_proposed_tasks": ".orchestrate/{{sid}}/stage-1/proposed-tasks.json",
+    "session_proposed_tasks": ".orchestrate/{{sid}}/proposed-tasks.json",
+    "meeting_minutes": ".orchestrate/{{sid}}/meetings/minutes-decomposition-multi-agent-sync-{{ts}}.json",
+    "reasoning_trace": ".orchestrate/{{sid}}/reasoning-traces/reasoning-trace-decomposition-{{ts}}.json",
+    "gate_approval": ".orchestrate/{{sid}}/gates/gate-approval-decomposition-{{ts}}.json"
+  },
+  "domain_memory_writes": [],
+  "key_findings": [],
+  "errors": [],
+  "warnings": [],
+  "duration_seconds": 0
+}

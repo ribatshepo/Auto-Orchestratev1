@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "planning_research_sidecar",
+  "session_id": "{{sid}}",
+  "phase": "P2",
+  "role": "R3",
+  "focus": "success-metrics-sli",
+  "producer_agent": "sre",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "success_metrics": [
+      {
+        "metric": "",
+        "sli": "",
+        "baseline": "",
+        "target": "",
+        "measurement_method": "",
+        "timeline": ""
+      }
+    ]
+  },
+  "side_outputs": ["planning/P2-sre-metrics-review.md"],
+  "sources": [],
+  "confidence_local": 0.0
+}

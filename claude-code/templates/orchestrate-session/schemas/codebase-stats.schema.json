@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/codebase-stats.json",
+  "title": "Codebase Stats",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "summary", "overall_score"],
+  "properties": {
+    "artifact_type":   {"const": "codebase_stats"},
+    "summary":         {"type": "object"},
+    "overall_score":   {"type": "number"},
+    "threshold":       {"type": "number"},
+    "pass":            {"type": "boolean"},
+    "tech_debt_score": {"type": "number"}
+  }
+}

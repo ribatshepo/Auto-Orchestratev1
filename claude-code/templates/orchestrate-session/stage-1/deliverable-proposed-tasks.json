@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "proposed_tasks",
+  "session_id": "{{sid}}",
+  "deliverable": "{{deliverable}}",
+  "deliverable_name": "{{deliverable_name}}",
+  "produced_at": "{{produced_at}}",
+  "produced_by": "product-manager",
+  "independence_group": "{{independence_group}}",
+  "tasks": [
+    {
+      "_template_example": true,
+      "id": "{{deliverable}}-T1",
+      "subject": "Concrete task subject.",
+      "story_points": 3,
+      "blockedBy": [],
+      "files_touched": [],
+      "acceptance_criteria": [
+        "AC-1: …",
+        "AC-2: …"
+      ],
+      "dod_rows": [],
+      "eng_std_001": true,
+      "risk_notes": ""
+    }
+  ]
+}

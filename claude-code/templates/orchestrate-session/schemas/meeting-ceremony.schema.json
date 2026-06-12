@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/meeting-ceremony.json",
+  "title": "Canonical Ceremony Meeting",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "meeting_id", "process_id"],
+  "properties": {
+    "artifact_type": {"const": "meeting_ceremony"},
+    "meeting_id":    {"type": "string"},
+    "process_id":    {"enum": ["p-027", "p-028", "p-029"]},
+    "meeting_type":  {"enum": ["sprint_review", "sprint_retro", "backlog_refinement"]},
+    "minutes":       {"type": "object"}
+  }
+}

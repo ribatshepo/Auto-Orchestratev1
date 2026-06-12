@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auto-orchestrate.local/schemas/compliance-report.json",
+  "title": "Compliance Report",
+  "allOf": [{"$ref": "_envelope.schema.json"}],
+  "type": "object",
+  "required": ["artifact_type", "session_id", "compliance_score", "results"],
+  "properties": {
+    "artifact_type":    {"const": "compliance_report"},
+    "compliance_score": {"type": "number"},
+    "threshold":        {"type": "number"},
+    "pass":             {"type": "boolean"},
+    "results":          {"type": "array"}
+  }
+}

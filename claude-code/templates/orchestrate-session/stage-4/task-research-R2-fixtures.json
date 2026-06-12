@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_4_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 4,
+  "role": "R2",
+  "focus": "fixture-design",
+  "producer_agent": "software-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "fixtures": [
+      {"name": "", "scope": "function|class|module|session", "produces": ""}
+    ],
+    "factories": [
+      {"name": "", "produces_type": "", "varies_by": []}
+    ],
+    "parametrize_sets": [
+      {"test_name": "", "param_axes": [], "case_count": 0}
+    ]
+  },
+  "sources": ["stage-3/{{task}}/changes.md"],
+  "confidence_local": 0.0
+}

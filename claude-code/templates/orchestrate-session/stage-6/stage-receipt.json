@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 6,
+  "stage_name": "documentation",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "verdict": "{{verdict}}",
+  "categories": {
+    "api":         {"status": "completed", "artifacts": [], "description": ""},
+    "integration": {"status": "completed", "artifacts": [], "description": ""},
+    "ops-runbook": {"status": "completed", "artifacts": [], "description": "Required even when N/A — see no-ops-impact.md in this folder."},
+    "adr":         {"status": "completed", "artifacts": [], "description": ""},
+    "user-guide":  {"status": "completed", "artifacts": [], "description": "Required even when internal-only — see no-user-surface.md in this folder."},
+    "changelog":   {"status": "completed", "artifacts": [], "description": ""}
+  },
+  "p058_api_docs": "ACKNOWLEDGED",
+  "p059_runbook": "{{p059_status}}",
+  "p060_adr_published": 0,
+  "proceed": true
+}

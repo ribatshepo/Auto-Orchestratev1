@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "task_id": "{{task}}",
+  "independence_group_id": "{{independence_group}}",
+  "stage": 3,
+  "produced_by": "software-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "files_modified": [
+    {
+      "path": "{{path}}",
+      "loc": 0,
+      "functions": [],
+      "max_function_lines": 0,
+      "note": ""
+    }
+  ],
+  "test_files_created": [
+    {
+      "path": "{{test_path}}",
+      "loc": 0,
+      "tests_passed": 0,
+      "tests_failed": 0,
+      "test_names": []
+    }
+  ],
+  "eng_std_001": {
+    "no_any": true,
+    "no_dynamic": true,
+    "solid_di": "PASS",
+    "result_either_for_failures": "PASS",
+    "no_impl_manager_helper_suffixes": true,
+    "no_commented_out_code": true,
+    "loc_per_file_le_300": true,
+    "max_function_le_40_lines": true,
+    "pinned_versions_used": {},
+    "banned_packages_absent": [],
+    "self_check": "PASS"
+  },
+  "ac_verification": {
+    "AC-1": "PASS — evidence",
+    "AC-2": "PASS — evidence"
+  }
+}

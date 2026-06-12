@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "phase_receipt",
+  "session_id": "{{sid}}",
+  "phase": "{{phase_name}}",
+  "phase_kind": "{{phase_kind}}",
+  "produced_at": "{{produced_at}}",
+  "produced_by": "orchestrator",
+  "started_at": "{{started_at}}",
+  "completed_at": "{{completed_at}}",
+  "verdict": "{{verdict}}",
+  "artifacts_emitted": [],
+  "agents_spawned": [],
+  "next_phase": "{{next_phase}}",
+  "notes": "{{notes}}"
+}

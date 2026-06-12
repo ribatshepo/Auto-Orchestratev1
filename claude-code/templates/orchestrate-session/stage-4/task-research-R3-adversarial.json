@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_4_research_sidecar",
+  "session_id": "{{sid}}",
+  "task": "{{task}}",
+  "stage": 4,
+  "role": "R3",
+  "focus": "adversarial-input",
+  "producer_agent": "security-engineer",
+  "produced_at": "{{produced_at}}",
+  "status": "draft",
+  "body": {
+    "negative_cases": [
+      {"input_kind": "", "expected_behavior": "reject|sanitize|log|raise", "rationale": ""}
+    ],
+    "injection_vectors": [
+      {"vector": "sql|html|shell|ldap|template|prototype-pollution", "boundary": "", "test_recommendation": ""}
+    ],
+    "boundary_smells": []
+  },
+  "sources": [],
+  "confidence_local": 0.0
+}

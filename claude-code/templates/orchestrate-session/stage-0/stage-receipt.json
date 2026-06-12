@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "stage_receipt",
+  "session_id": "{{sid}}",
+  "stage": 0,
+  "stage_name": "research",
+  "produced_by": "orchestrator",
+  "produced_at": "{{produced_at}}",
+  "status": "completed",
+  "substages": {
+    "0a_project_wide": {
+      "status": "completed",
+      "artifact": ".orchestrate/{{sid}}/stage-0/{{date}}_research-project-wide.md"
+    },
+    "0b_per_deliverable": {
+      "status": "completed",
+      "deliverables_covered": []
+    }
+  },
+  "key_findings": [],
+  "cve_blocked_packages": [],
+  "recommended_versions": {},
+  "domain_memory_writes": [],
+  "errors": [],
+  "warnings": [],
+  "duration_seconds": 0
+}
