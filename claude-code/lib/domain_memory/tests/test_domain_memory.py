@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
 
 from lib.domain_memory.hooks import (
     normalise_error_fingerprint,
+    on_architecture_complete,
     on_fix_applied,
     on_pattern_discovered,
     on_research_complete,
@@ -239,6 +240,24 @@ class TestHooks:
             description="N+1 queries",
         )
         assert result is True
+
+    def test_on_architecture_complete(self, store: DomainMemoryStore) -> None:
+        result = on_architecture_complete(
+            store,
+            decision="Adopt hexagonal architecture",
+            alternatives=["layered", "MVC"],
+            rationale="Isolates domain from I/O",
+            constraints=["no framework imports in domain"],
+            stage="stage_1",
+            risk_level="medium",
+        )
+        assert result is True
+        entries = store.query("decision_log")
+        assert len(entries) == 1
+        assert entries[0]["decision"] == "Adopt hexagonal architecture"
+
+    def test_on_architecture_complete_safe_with_none_store(self) -> None:
+        assert on_architecture_complete(None, decision="x") is False
 
     def test_hooks_safe_with_none_store(self) -> None:
         assert on_research_complete(None, topic="t", findings=[]) is False

@@ -21,6 +21,8 @@ import threading
 from pathlib import Path
 from typing import Any, Iterator
 
+from ._store_io import atomic_write_json, append_jsonl, load_json_safe, read_jsonl
+
 try:  # package context: lib.ci_engine.knowledge_store_writer
     from .._time import utc_now_iso as _utc_now_iso
 except ImportError:  # standalone: lib/ on sys.path, _time is top-level
@@ -179,35 +181,9 @@ def _ensure_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(_SQLITE_SCHEMA)
 
 
-def _atomic_write_json(target_path: Path, data: dict) -> None:
-    """Write JSON atomically via tmp-then-rename.
-
-    The caller MUST ensure target_path.parent exists before calling.
-    """
-    tmp_path = target_path.with_suffix(target_path.suffix + ".tmp")
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as fh:
-            json.dump(data, fh, indent=2, ensure_ascii=False, sort_keys=False)
-            fh.write("\n")
-            fh.flush()
-            os.fsync(fh.fileno())
-        os.rename(tmp_path, target_path)
-    except BaseException:
-        try:
-            tmp_path.unlink(missing_ok=True)
-        except OSError:
-            pass
-        raise
-
-
-def _append_jsonl(target_path: Path, record: dict) -> None:
-    """Append a single JSON record to a JSONL file with flush and fsync."""
-    os.makedirs(target_path.parent, exist_ok=True)
-    with open(target_path, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(record, ensure_ascii=False))
-        fh.write("\n")
-        fh.flush()
-        os.fsync(fh.fileno())
+# Shared ci_engine I/O primitives (see lib/ci_engine/_store_io.py).
+_atomic_write_json = atomic_write_json
+_append_jsonl = append_jsonl
 
 
 def _validate_stage_entry(name: str, data: dict) -> None:
@@ -241,31 +217,10 @@ def _validate_stage_entry(name: str, data: dict) -> None:
         )
 
 
-def _load_json_safe(path: Path) -> dict | None:
-    """Load a JSON file, returning None if the file does not exist."""
-    if not path.is_file():
-        return None
-    with open(path, "r", encoding="utf-8") as fh:
-        return json.load(fh)
-
-
-def _read_jsonl(path: Path) -> list[dict]:
-    """Read all valid records from a JSONL file, skipping bad lines."""
-    records: list[dict] = []
-    if not path.is_file():
-        return records
-    with open(path, "r", encoding="utf-8") as fh:
-        for line_num, line in enumerate(fh, start=1):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            try:
-                records.append(json.loads(stripped))
-            except json.JSONDecodeError:
-                logger.warning(
-                    "Skipping corrupt JSONL line %d in %s", line_num, path
-                )
-    return records
+# Shared ci_engine I/O primitives (see lib/ci_engine/_store_io.py).
+# This module reads raw records (no envelope peeling).
+_load_json_safe = load_json_safe
+_read_jsonl = read_jsonl
 
 
 def _collect_run_summaries(store_path: Path) -> list[dict]:

@@ -28,6 +28,7 @@ from pathlib import Path
 from typing import Any
 
 from lib.ci_engine.root_cause_classifier import classify_failure
+from lib.ci_engine._store_io import append_jsonl, load_json_safe
 
 try:  # package context: lib.ci_engine.ooda_controller
     from .._time import utc_now_iso as _utc_now_iso, utc_now_iso_ms as _utc_now_iso_ms
@@ -105,26 +106,13 @@ class ActionResult:
 # Internal helpers
 # ---------------------------------------------------------------------------
 
+# Shared ci_engine I/O primitives (see lib/ci_engine/_store_io.py).
+# This module swallows read errors (returns None) for resilience.
 def _load_json_safe(path: Path) -> dict[str, Any] | None:
-    """Load a JSON file, returning None if the file does not exist or is invalid."""
-    if not path.is_file():
-        return None
-    try:
-        with open(path, "r", encoding="utf-8") as fh:
-            return json.load(fh)
-    except (json.JSONDecodeError, OSError) as exc:
-        logger.warning("Failed to load %s: %s", path, exc)
-        return None
+    return load_json_safe(path, swallow=True)
 
 
-def _append_jsonl(target_path: Path, record: dict[str, Any]) -> None:
-    """Append a single JSON record to a JSONL file with flush and fsync."""
-    os.makedirs(target_path.parent, exist_ok=True)
-    with open(target_path, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(record, ensure_ascii=False))
-        fh.write("\n")
-        fh.flush()
-        os.fsync(fh.fileno())
+_append_jsonl = append_jsonl
 
 
 def _compute_std_deviation(values: list[float]) -> float:

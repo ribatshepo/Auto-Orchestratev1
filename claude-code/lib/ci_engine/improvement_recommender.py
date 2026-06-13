@@ -20,6 +20,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ._store_io import atomic_write_json, append_jsonl, load_json_safe, read_jsonl
+
 try:  # package context: lib.ci_engine.improvement_recommender
     from .._time import utc_now_iso as _utc_now_iso
 except ImportError:  # standalone: lib/ on sys.path, _time is top-level
@@ -154,33 +156,9 @@ def _wrap_targets_envelope(output: dict[str, Any], run_id: str) -> dict[str, Any
     )
 
 
-def _atomic_write_json(target_path: Path, data: dict[str, Any]) -> None:
-    """Write JSON atomically via tmp-then-rename with fsync."""
-    os.makedirs(target_path.parent, exist_ok=True)
-    tmp_path = target_path.with_suffix(target_path.suffix + ".tmp")
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as fh:
-            json.dump(data, fh, indent=2, ensure_ascii=False, sort_keys=False)
-            fh.write("\n")
-            fh.flush()
-            os.fsync(fh.fileno())
-        os.rename(tmp_path, target_path)
-    except BaseException:
-        try:
-            tmp_path.unlink(missing_ok=True)
-        except OSError:
-            pass
-        raise
-
-
-def _append_jsonl(target_path: Path, record: dict[str, Any]) -> None:
-    """Append a single JSON record to a JSONL file with flush and fsync."""
-    os.makedirs(target_path.parent, exist_ok=True)
-    with open(target_path, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(record, ensure_ascii=False))
-        fh.write("\n")
-        fh.flush()
-        os.fsync(fh.fileno())
+# Shared ci_engine I/O primitives (see lib/ci_engine/_store_io.py).
+_atomic_write_json = atomic_write_json
+_append_jsonl = append_jsonl
 
 
 _ENVELOPE_REQUIRED = (
@@ -205,31 +183,13 @@ def _peel(obj: Any) -> Any:
     return obj
 
 
+# Envelope-aware wrappers over the shared ci_engine I/O primitives.
 def _load_json_safe(path: Path) -> dict[str, Any] | None:
-    """Load a JSON file (envelope-aware), returning None if the file does not exist."""
-    if not path.is_file():
-        return None
-    with open(path, "r", encoding="utf-8") as fh:
-        return _peel(json.load(fh))
+    return load_json_safe(path, peel=_peel)
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
-    """Read JSONL records (envelope-aware), skipping bad lines."""
-    records: list[dict[str, Any]] = []
-    if not path.is_file():
-        return records
-    with open(path, "r", encoding="utf-8") as fh:
-        for line_num, line in enumerate(fh, start=1):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            try:
-                records.append(_peel(json.loads(stripped)))
-            except json.JSONDecodeError:
-                logger.warning(
-                    "Skipping corrupt JSONL line %d in %s", line_num, path
-                )
-    return records
+    return read_jsonl(path, peel=_peel)
 
 
 def _validate_run_id(run_id: str) -> None:

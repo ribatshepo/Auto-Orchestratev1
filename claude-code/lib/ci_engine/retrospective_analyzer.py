@@ -25,6 +25,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ._store_io import atomic_write_json, load_json_safe, read_jsonl
+
 try:  # package context: lib.ci_engine.retrospective_analyzer
     from .._time import utc_now_iso as _utc_now_iso
 except ImportError:  # standalone: lib/ on sys.path, _time is top-level
@@ -186,81 +188,26 @@ def _peel(obj: Any) -> Any:
     return obj
 
 
+# Envelope-aware wrappers over the shared ci_engine I/O primitives
+# (see lib/ci_engine/_store_io.py). The non-"optional" variants raise
+# FileNotFoundError on a missing file; the "_optional" variants return empty.
 def _load_json(path: Path) -> dict[str, Any]:
-    """Load a JSON file (envelope-aware), raising FileNotFoundError if missing."""
-    if not path.is_file():
-        raise FileNotFoundError(f"Required file not found: {path}")
-    with open(path, "r", encoding="utf-8") as fh:
-        return _peel(json.load(fh))
+    return load_json_safe(path, peel=_peel, missing_ok=False)
 
 
 def _load_json_optional(path: Path) -> dict[str, Any] | None:
-    """Load a JSON file (envelope-aware), returning None if it does not exist."""
-    if not path.is_file():
-        return None
-    with open(path, "r", encoding="utf-8") as fh:
-        return _peel(json.load(fh))
+    return load_json_safe(path, peel=_peel)
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
-    """Read all valid records from a JSONL file, peeling envelopes when present."""
-    records: list[dict[str, Any]] = []
-    if not path.is_file():
-        raise FileNotFoundError(f"Required file not found: {path}")
-    with open(path, "r", encoding="utf-8") as fh:
-        for line_num, line in enumerate(fh, start=1):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            try:
-                records.append(_peel(json.loads(stripped)))
-            except json.JSONDecodeError:
-                logger.warning(
-                    "Skipping corrupt JSONL line %d in %s", line_num, path
-                )
-    return records
+    return read_jsonl(path, peel=_peel, missing_ok=False)
 
 
 def _read_jsonl_optional(path: Path) -> list[dict[str, Any]]:
-    """Read JSONL records (envelope-aware), returning empty list if file missing."""
-    if not path.is_file():
-        return []
-    records: list[dict[str, Any]] = []
-    with open(path, "r", encoding="utf-8") as fh:
-        for line_num, line in enumerate(fh, start=1):
-            stripped = line.strip()
-            if not stripped:
-                continue
-            try:
-                records.append(_peel(json.loads(stripped)))
-            except json.JSONDecodeError:
-                logger.warning(
-                    "Skipping corrupt JSONL line %d in %s", line_num, path
-                )
-    return records
+    return read_jsonl(path, peel=_peel)
 
 
-def _atomic_write_json(target_path: Path, data: dict[str, Any]) -> None:
-    """Write JSON atomically via tmp-then-rename."""
-    os.makedirs(target_path.parent, exist_ok=True)
-    fd, tmp_path_str = tempfile.mkstemp(
-        dir=str(target_path.parent),
-        suffix=".tmp",
-    )
-    tmp_path = Path(tmp_path_str)
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as fh:
-            json.dump(data, fh, indent=2, ensure_ascii=False, sort_keys=False)
-            fh.write("\n")
-            fh.flush()
-            os.fsync(fh.fileno())
-        os.replace(str(tmp_path), str(target_path))
-    except BaseException:
-        try:
-            tmp_path.unlink(missing_ok=True)
-        except OSError:
-            pass
-        raise
+_atomic_write_json = atomic_write_json
 
 
 def _collect_run_summaries(store_path: Path) -> list[dict[str, Any]]:

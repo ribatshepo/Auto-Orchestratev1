@@ -130,6 +130,7 @@ class DomainIndexer:
             CREATE INDEX IF NOT EXISTS idx_patterns_domain ON patterns(domain);
             CREATE INDEX IF NOT EXISTS idx_codebase_filepath ON codebase(file_path);
             CREATE INDEX IF NOT EXISTS idx_preferences_key ON preferences(key);
+            CREATE INDEX IF NOT EXISTS idx_decisions_decision ON decisions(decision);
         """)
         conn.commit()
 

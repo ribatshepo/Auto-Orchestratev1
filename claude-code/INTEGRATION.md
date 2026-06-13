@@ -64,7 +64,7 @@ The installer:
 5. `chmod +x ~/.claude/templates/orchestrate-session/check-completeness.py`
 6. Installs Python dependencies (best-effort via `pip3 install --user --quiet` against `claude-code/requirements.txt` if present)
 7. Runs `check-completeness.py --lint` as a post-install sanity probe
-8. Prints a final ratio: `Agents: 18/18`, `Skills: 49/49`, `Templates: N/N`, etc.
+8. Prints a final ratio: `Agents: 22/22`, `Skills: 49/49`, `Templates: N/N`, etc.
 
 Add `--check` for **drift detection without writing**: it compares source vs `~/.claude/` and reports any missing or mismatched components without modifying anything. Use this to verify a previous install or to dry-run an upgrade.
 
@@ -179,7 +179,7 @@ After `./install.sh` succeeds, `~/.claude/` looks like this:
 ├── settings.json                  ← permissions allow/deny + env vars
 ├── PERMISSION-MODES.md            ← user-facing reference
 ├── backup-<YYYYMMDD>-<HHMMSS>/    ← created by installer if existing config was present
-├── agents/                        ← 18 agent .md files (flat)
+├── agents/                        ← 22 agent .md files (flat)
 │   ├── orchestrator.md
 │   ├── researcher.md
 │   └── …
@@ -190,7 +190,7 @@ After `./install.sh` succeeds, `~/.claude/` looks like this:
 │   └── …
 ├── commands/
 │   └── auto-orchestrate.md        ← the one user-facing command
-├── _shared/                       ← 12 protocols + templates + style guides
+├── _shared/                       ← 13 protocols + templates + style guides
 │   ├── protocols/
 │   │   ├── agent-activation.md
 │   │   ├── agent-preamble.md
@@ -214,7 +214,7 @@ After `./install.sh` succeeds, `~/.claude/` looks like this:
 │   ├── _time.py                    (shared UTC timestamp helpers)
 │   └── path_compat.py              (legacy-root resolver during migration)
 ├── scripts/                       ← migration + helper scripts
-├── processes/                     ← P-004 .. P-093 catalog + injection map
+├── processes/                     ← P-001 .. P-093 catalog + injection map
 └── templates/                     ← session artifact contract + validator
     └── orchestrate-session/
         ├── manifest.yml            (100 rules)
@@ -746,7 +746,7 @@ Set `CLAUDE_LOG_LEVEL=DEBUG` in the environment (or in `~/.claude/settings.json#
 | Templates README                               | `claude-code/templates/orchestrate-session/README.md`                                                |
 | Install script                                 | `install.sh`                                                                                         |
 | Uninstall script                               | `uninstall.sh`                                                                                       |
-| Process catalog (P-004..P-093)                 | `claude-code/processes/process_injection_map.md`                                                     |
+| Process catalog (P-001..P-093)                 | `claude-code/processes/process_injection_map.md`                                                     |
 | Migration script                               | `claude-code/scripts/migrate_to_unified_orchestrate.py`                                              |
 
 ---

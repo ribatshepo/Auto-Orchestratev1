@@ -31,7 +31,7 @@ Pipeline:
   1 orchestrator agent          (spawned per iteration; enforces MAIN-001..MAIN-017)
   22 agents                     (per claude-code/manifest.json — includes 4 continuity scouts under CONT-007)
   49 skills                     (per claude-code/manifest.json)
-  28 processes                  (P-004 .. P-093 catalog)
+  28 process files              (manifest entries; cover the P-001 .. P-093 process catalog)
   13 shared protocols           (claude-code/_shared/protocols/*.md — includes spawn-core.md)
   3 lib packages + 2 modules    (artifact_envelope/, ci_engine/, domain_memory/; path_compat.py + _time.py)
 
@@ -355,7 +355,7 @@ Step 4.8d.5 of `auto-orchestrate.md` runs `gate-meeting-completeness` at every s
 
 ---
 
-## 7. Agent inventory (18)
+## 7. Agent inventory (22)
 
 | Agent                               | Purpose                                                                                                                                                     | Tools                                       | Primary pipeline role                                                                                                                 |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -378,8 +378,12 @@ Step 4.8d.5 of `auto-orchestrate.md` runs `gate-meeting-completeness` at every s
 | **auditor**                   | Spec compliance auditor. Reads specs + codebase, produces compliance reports with gap analysis. Read-only on project code; writes audit findings only.     | Read, Write, Glob, Grep, Bash               | Phase 5v audit loop lead                                                                                                              |
 | **debugger**                  | Autonomous debugging agent. Triage → research → fix → verify cycle for runtime / Docker / test / build / config failures. May spawn researcher subagent. | Read, Grep, Glob, Bash, Write, Edit         | Phase 5e debug loop lead                                                                                                              |
 | **technical-writer**          | API docs, developer guides, runbooks, release notes, SDK samples, architecture docs, KB content. Documentation-first; maintain over duplicate.              | Read, Write, Edit, Glob, Grep               | Stage 6 lead (6-category fanout)                                                                                                      |
+| **scout-jsonl**               | Continuity scout — reads the domain JSONL stores (research_ledger, decision_log, pattern_library, fix_registry).                                            | Read, Glob, Grep, Bash, Write               | Step −0.5 continuity fan-out (CONT-007); writes a brief part for `continuity-scout` to merge                                         |
+| **scout-sessions**            | Continuity scout — reads the 3 newest prior `.orchestrate/auto-orc-*` sessions (checkpoints, receipts, learnings).                                          | Read, Glob, Grep, Bash, Write               | Step −0.5 continuity fan-out (CONT-007); writes a brief part for `continuity-scout` to merge                                         |
+| **scout-pipeline**            | Continuity scout — reads baselines, improvement-recommender state, and the audit findings ledger.                                                          | Read, Glob, Grep, Bash, Write               | Step −0.5 continuity fan-out (CONT-007); writes a brief part for `continuity-scout` to merge                                         |
+| **scout-context**             | Continuity scout — reads user_preferences + codebase_analysis stores.                                                                                       | Read, Glob, Grep, Bash, Write               | Step −0.5 continuity fan-out (CONT-007); writes a brief part for `continuity-scout` to merge                                         |
 
-Note: `spec-creator` is technically a skill not an agent (lives under `skills/spec-creator/`), but is listed here because it leads Stage 2's spec drafting when invoked inline by the Multi-Agent Sync. The 18 row count reflects `claude-code/agents/`.
+Note: the table lists all **22 agents** in `claude-code/agents/` (16 role agents + `orchestrator` + the `continuity-scout` consolidator + its 4 source scouts). `spec-creator` is technically a skill (lives under `skills/spec-creator/`), listed here only because it leads Stage 2's spec drafting when invoked inline by the Multi-Agent Sync — it is not counted among the 22.
 
 ---
 
