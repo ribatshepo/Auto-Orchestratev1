@@ -2607,6 +2607,7 @@
         "test_directory": "lib/ci_engine/tests/",
         "description": "Continuous improvement engine providing OODA loops (within-run) and PDCA loops (cross-run) for the Auto-Orchestrate pipeline. Powers baseline tracking, retrospective analysis, root-cause classification, knowledge persistence, and Prometheus metric export.",
         "modules": [
+          "_store_io",
           "baseline_manager",
           "improvement_recommender",
           "knowledge_store_writer",
