@@ -17,7 +17,7 @@ The 11 stages split into:
 
 Six conditional sub-phases (5v Audit, 5e Debug, 5q Quality, 5s Security, 5i Infra/SRE, 5d Data/ML) fire when triage flags or stage outcomes require them. After Stage 6, a Sprint Closure sequence (P-027 → P-028 → P-029) always runs; Phase 7 (Release Prep) fires when `release_flag=true`; Phase 8 (Post-Launch) and Phase 9 (Governance) follow conditionally.
 
-Every artifact a session emits is governed by a **deterministic contract** (`templates/orchestrate-session/manifest.yml`, 100 rules) and validated at session close by `check-completeness.py`. A session cannot terminate in the `completed` state without a passing gate-completeness check (ARTIFACT-CHECK-001).
+Every artifact a session emits is governed by a **deterministic contract** (`templates/orchestrate-session/manifest.yml`, 145 rules) and validated at session close by `check-completeness.py`. A session cannot terminate in the `completed` state without a passing gate-completeness check (ARTIFACT-CHECK-001).
 
 What changed recently (see §16): autonomous reasoning gates replaced human gates for P1–P4; the artifact contract + completeness checker landed in commit `5d6e081`; the MAIN-017 Stage-Close Protocol that wires the always-populate handlers for `phase-receipts/`, `domain-reviews/`, `reasoning-traces/`, and `meetings/` was just implemented today (2026-05-18).
 
@@ -533,7 +533,7 @@ Plus auto-orchestrate.md's own table (lines 380-410): PREFLIGHT-001, PRE-RESEARC
 
 ## 11. Artifact contract
 
-### 11.1 `manifest.yml` — 100 rules
+### 11.1 `manifest.yml` — 145 rules
 
 `claude-code/templates/orchestrate-session/manifest.yml` is the deterministic per-session contract. It declares every required path with:
 
@@ -685,7 +685,7 @@ LAYOUT-GATE-001 verifies this tree exists before any spawn (Step 3.0 in `auto-or
 ```
 templates/orchestrate-session/
 ├── README.md
-├── manifest.yml                          (100 rules + 7 consistency_checks)
+├── manifest.yml                          (145 rules + 7 consistency_checks)
 ├── check-completeness.py                 (the validator; CONS-001..007 + --lint + --allow-unrooted)
 ├── session/                              (root artifact templates: checkpoint.json, MANIFEST.jsonl,
 │                                          continuity-brief.md, raid-log.json, proposed-tasks.json)

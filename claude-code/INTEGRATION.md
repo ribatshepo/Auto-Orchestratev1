@@ -104,7 +104,7 @@ cp claude-code/PERMISSION-MODES.md ~/.claude/PERMISSION-MODES.md
 
 # 7. Sanity probe
 python3 ~/.claude/templates/orchestrate-session/check-completeness.py --lint
-# Expected: [LINT] manifest OK: 100 rules
+# Expected: [LINT] manifest OK: 145 rules
 ```
 
 ### 3.3 Selective install
@@ -260,7 +260,7 @@ python3 -c "import json; m=json.load(open('$HOME/.claude/manifest.json')); print
 
 ```bash
 python3 ~/.claude/templates/orchestrate-session/check-completeness.py --lint
-# Expected: [LINT] manifest OK: 100 rules
+# Expected: [LINT] manifest OK: 145 rules
 ```
 
 ### 4.4 Quick smoke test
@@ -512,6 +512,10 @@ The `references/` field in skill memory (see `/remember`) is the canonical way t
 >     --description "…" --triggers "a,b" --for-agent <agent> --dry-run
 > ```
 >
+> `extend.py` updates the dev tree only. To deploy a new component into an
+> existing `~/.claude/` install, run `./install-component.sh <skill|agent> <name>`
+> (targeted copy + manifest/doc re-sync) or `./install.sh` (full reinstall).
+>
 > The manual steps below document what the scaffolder does under the hood and
 > remain valid for hand-editing. See `docs/EXTENDING.md` for the full guide.
 
@@ -761,7 +765,7 @@ Set `CLAUDE_LOG_LEVEL=DEBUG` in the environment (or in `~/.claude/settings.json#
 | Cross-pipeline state                           | `claude-code/_shared/protocols/cross-pipeline-state.md`                                              |
 | Engineering Standards (full text)              | `claude-code/_shared/protocols/engineering-standards.md`                                             |
 | Output schemas / envelope                      | `claude-code/_shared/protocols/output-schemas.md` + `claude-code/lib/artifact_envelope/schemas.py` |
-| Artifact contract (100 rules)                  | `claude-code/templates/orchestrate-session/manifest.yml`                                             |
+| Artifact contract (145 rules)                  | `claude-code/templates/orchestrate-session/manifest.yml`                                             |
 | Completeness validator                         | `claude-code/templates/orchestrate-session/check-completeness.py`                                    |
 | Templates README                               | `claude-code/templates/orchestrate-session/README.md`                                                |
 | Install script                                 | `install.sh`                                                                                         |

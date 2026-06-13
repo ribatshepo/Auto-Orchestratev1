@@ -12,7 +12,7 @@ The workflow is a **registry-driven** system. Three things must agree for an ext
 
 1. **On-disk file** — a `skills/<name>/SKILL.md` directory or an `agents/<name>.md` file.
 2. **`manifest.json` entry** — `claude-code/manifest.json` (schema `1.0.0`) is the authoritative registry. Top-level arrays: `agents[]`, `skills[]`, `commands[]`, `processes[]`, plus `shared{}` and `stats{}`.
-3. **Install** — `./install.sh` copies the dev tree into `~/.claude/`; `./install.sh --check` SHA256-verifies the installed copy against source (drift detection, read-only).
+3. **Install** — `./install.sh` copies the whole dev tree into `~/.claude/`; `./install.sh --check` SHA256-verifies the installed copy against source (drift detection, read-only). To deploy just one newly-added component, use `./install-component.sh <skill|agent> <name>` (copies that component + re-syncs `manifest.json`/prose docs, with a backup).
 
 ### Routing is digest-driven
 
@@ -45,6 +45,14 @@ python3 claude-code/skills/_shared/python/extend.py agent <name> \
 ```
 
 `--dry-run` prints a unified diff of every change without writing. Tests: `skills/_shared/python/tests/test_extend.py`. The manual sections below explain what the scaffolder does under the hood and remain the reference for hand-editing.
+
+`extend.py` updates the **dev tree** (`claude-code/`). To deploy the new component into an existing `~/.claude/` installation, follow with the targeted installer (see §1 *Install*):
+
+```bash
+./install-component.sh <skill|agent> <name>        # one component → ~/.claude
+# or re-run the full installer:
+./install.sh
+```
 
 ---
 

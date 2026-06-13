@@ -56,9 +56,11 @@ The install script copies the following into `~/.claude/`:
 
 > **Drift check**: `./install.sh --check` reports any source-vs-installed mismatch (counts per directory, SHA256 of `orchestrator.md`/`manifest.json`/`settings.json`, and `manifest.yml --lint`) without writing.
 
+> **Add one component to an existing install**: after scaffolding a new skill/agent with `extend.py` (see [docs/EXTENDING.md](docs/EXTENDING.md)), deploy just that component with `./install-component.sh <skill|agent> <name>` — it copies the one component and re-syncs `manifest.json`/docs (with a backup) instead of a full reinstall.
+
 ### Deterministic per-session artifact contract
 
-Every `/auto-orchestrate` run produces the same deterministic file tree under `.orchestrate/<sid>/` — same folder names, same envelope schema, same required artifacts. The contract is defined in `~/.claude/templates/orchestrate-session/manifest.yml` (100 rules + 3 cross-cardinality consistency checks across `ART-ROOT-*`, `ART-PLAN-*`, `ART-S0-*` … `ART-S6-*`, `ART-GATE-*`, `ART-MTG-*`, `ART-DR-*`, `ART-PR-*`, `ART-RT-*`). Before terminal-state is set, the orchestrator runs `check-completeness.py` against the session folder (Step 7, constraint `ARTIFACT-CHECK-001`); missing files trigger a remediation loop or set `terminal_state: INCOMPLETE_ARTIFACTS`. Empty folders are never acceptable — when no rule fires for a stage, a real baseline artifact is written (e.g. a `qa-engineer-stage-N-baseline.md` domain review, not a sentinel).
+Every `/auto-orchestrate` run produces the same deterministic file tree under `.orchestrate/<sid>/` — same folder names, same envelope schema, same required artifacts. The contract is defined in `~/.claude/templates/orchestrate-session/manifest.yml` (145 rules + 7 consistency checks across `ART-ROOT-*`, `ART-PLAN-*`, `ART-S0-*` … `ART-S6-*`, `ART-GATE-*`, `ART-MTG-*`, `ART-DR-*`, `ART-PR-*`, `ART-RT-*`). Before terminal-state is set, the orchestrator runs `check-completeness.py` against the session folder (Step 7, constraint `ARTIFACT-CHECK-001`); missing files trigger a remediation loop or set `terminal_state: INCOMPLETE_ARTIFACTS`. Empty folders are never acceptable — when no rule fires for a stage, a real baseline artifact is written (e.g. a `qa-engineer-stage-N-baseline.md` domain review, not a sentinel).
 
 ## Quick Start
 

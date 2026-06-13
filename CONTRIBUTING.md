@@ -101,7 +101,7 @@ Auto-Orchestrate/
     ├── templates/               # Deterministic session artifact contract (ARTIFACT-CONTRACT-001)
     │   └── orchestrate-session/
     │       ├── README.md                  # Contract overview
-    │       ├── manifest.yml               # 100 rules + 3 consistency checks — single source of truth
+    │       ├── manifest.yml               # 145 rules + 7 consistency checks — single source of truth
     │       ├── check-completeness.py      # Step-7 validator (stdlib-only, Python 3.12+)
     │       ├── schemas/                   # 18 JSON schemas (envelope + per-artifact)
     │       ├── session/                   # checkpoint, raid-log, proposed-tasks, MANIFEST.jsonl, continuity-brief
@@ -156,7 +156,7 @@ python3 claude-code/skills/_shared/python/extend.py skill <name> \
   [--for-agent AGENT] [--scripts] [--references] [--dry-run]
 ```
 
-`--dry-run` previews every file change without writing. The manual steps below document what the scaffolder does under the hood (and remain valid for hand-editing).
+`--dry-run` previews every file change without writing. The manual steps below document what the scaffolder does under the hood (and remain valid for hand-editing). `extend.py` updates the dev tree only — to deploy into an existing `~/.claude/` install, run `./install-component.sh skill <name>` (targeted) or `./install.sh` (full).
 
 ### Step-by-step (manual workflow)
 
@@ -177,7 +177,7 @@ python3 claude-code/skills/_shared/python/extend.py skill <name> \
    - `dispatch_triggers` — keywords agents use to route to this skill
    - `path` — relative path to `SKILL.md`
 
-6. **Re-install** to push changes: `./install.sh`
+6. **Deploy** to an existing install: `./install-component.sh skill <name>` (targeted — copies just this skill + re-syncs the manifest), or `./install.sh` for a full reinstall.
 
 > **References subdirectory**: Skills that need lookup tables, pattern libraries, or reference data should place those files in `skills/<name>/references/`. Several skills use this pattern (e.g., `debug-diagnostics/references/error-categories.md`, `spec-compliance/references/compliance-patterns.md`). Reference files are loaded at the start of the SKILL.md `## Before You Begin` section.
 
@@ -251,13 +251,13 @@ python3 claude-code/skills/_shared/python/extend.py agent <name> \
   [--tools "Read,Write,Edit,..."] [--skills "skill-a,skill-b"] [--dry-run]
 ```
 
-It cross-checks that any `--skills` already exist. `--dry-run` previews the diff. The manual steps below document the same work for hand-editing:
+It cross-checks that any `--skills` already exist. `--dry-run` previews the diff. After scaffolding (which updates the dev tree), deploy to an existing install with `./install-component.sh agent <name>`. The manual steps below document the same work for hand-editing:
 
 1. Create `claude-code/agents/<agent-name>.md` following the structure of an existing agent.
 2. Add the agent entry to `manifest.json` under `"agents"` and bump `stats.total_agents`.
 3. Update `ARCHITECTURE.md` (and `agents/README.md`) to document the new agent's role.
 4. **Decide manifest digest eligibility**: if your agent only routes work (reads `dispatch_triggers`), the digest is sufficient. If it consumes chaining metadata or activation rules, add it to the `needs_full_manifest()` allowlist.
-5. Re-install: `./install.sh`
+5. Deploy: `./install-component.sh agent <name>` (targeted) or `./install.sh` (full reinstall).
 
 ---
 
