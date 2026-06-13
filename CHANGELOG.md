@@ -9,10 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+## [1.2.0] - 2026-06-13
+
+### Added
+
 - **Deterministic per-session artifact contract (`ARTIFACT-CONTRACT-001`, `ARTIFACT-CHECK-001`, `MAIN-016`, `MAIN-017`)** — New `claude-code/templates/orchestrate-session/` tree provides the single source of truth for what every `/auto-orchestrate` session deposits under `.orchestrate/<sid>/`. Contents: `manifest.yml` (100 rules + 3 cross-cardinality consistency checks), 18 JSON schemas, ~50 markdown/JSON seed templates (session-root, P1–P4 planning, stage-0..6 per-stage and per-entity, gates, handovers, meetings, domain-reviews, phase-receipts, reasoning-traces), `check-completeness.py` validator, and `README.md`. The validator is stdlib-only (Python 3.12+) and reads `manifest.yml` to glob the session folder and cross-check per-deliverable / per-task slots against `proposed-tasks.json`. **Step 7 (Completeness Check)** runs before terminal-state; FAIL sets `terminal_state: "INCOMPLETE_ARTIFACTS"` and dispatches a 3-cycle remediation loop to the rule-owner agent. Sentinel placeholders (`*-none-*.json`) are forbidden — every folder always gets a real per-run artifact, including a baseline `qa-engineer-stage-N-baseline.md` when no `ACT-001..ACT-012` rule fires and an explicit "no test-only tasks decomposed" body in `stage-4/changes.md` when Stage 4 is empty. All six Stage-6 documentation categories (`api`, `integration`, `ops-runbook`, `adr`, `user-guide`, `changelog`) are mandatory; N/A categories produce a canonical `no-*.md` doc with documented reasoning. Verified against the example session `auto-orc-20260517-lifecycl/`: the checker flags 37 missing rules + 112 consistency failures, exactly the bug pattern the contract eliminates. Per-stage emission rules cite manifest rule IDs (`ART-S0-*` through `ART-S6-*`) in `commands/auto-orchestrate.md`, with `MAIN-016` and `MAIN-017` enforced by `agents/orchestrator.md`. Per-task emission contracts added to `researcher.md`, `spec-creator/SKILL.md`, `software-engineer.md`, and `technical-writer.md` — refusal-to-complete-without-templated-files is now a structural rule.
+- **Slim subagent-spawn protocol pack** — New `_shared/protocols/agent-preamble.md` and `_shared/protocols/spawn-core.md` (118-line slim protocol pack) standardize how subagents receive their continuity brief and core protocol context on spawn, reducing per-spawn prompt size. Rolled out across ~14 agent definitions and `commands/auto-orchestrate.md`. Commit `0c353ab`.
+- **Artifact-envelope excerpt pointers** — `lib/artifact_envelope/` gains excerpt + excerpt-pointer support so downstream consumers can reference slices of large artifacts instead of inlining them, improving context management. Commit `0c353ab`.
+- **`DomainIndexer` decision-log search** — New `lib/domain_memory/indexer.py` provides search over the decision log, exposed via `lib/domain_memory/__init__.py`. Commit `0c353ab`.
+- **`_store_io` shared I/O module** — New `lib/ci_engine/_store_io.py` consolidates JSON and JSONL read/write handling for the continuous-improvement engine into a single shared module, registered in `manifest.json`. Commits `9c031db`, `585dd51`.
+- **`CONSTRAINTS-REGISTRY.md`** — New `_shared/references/CONSTRAINTS-REGISTRY.md` documents the identifier families (constraint IDs, rule IDs) used across the pipeline. Commit `778e804`.
+- **Artifact-envelope and domain-memory test suites** — New `lib/artifact_envelope/tests/test_artifact_envelope.py` covers envelope construction and validation; `lib/domain_memory/tests/test_domain_memory.py` adds architecture-completion-logic tests. New `pytest.ini` provides a consistent test-execution environment. Commits `778e804`, `0c353ab`, `9c031db`.
 
 ### Changed
 
+- **Checkpoint schema bumped to 1.10.0** — Adds new context-diet optimization fields. Accompanies the slim spawn-protocol and excerpt-pointer work above. Commit `0c353ab`.
+- **Centralized UTC time handling** — Eight modules (`baseline_manager`, `improvement_recommender`, `knowledge_store_writer`, `ooda_controller`, `retrospective_analyzer`, `run_summary`, `stage_metrics_collector` in `lib/ci_engine/`, and `lib/domain_memory/store.py`) now import a single shared `_time` helper instead of each defining a local `_utc_now_iso`. Commit `778e804`.
+- **ci_engine I/O refactored onto `_store_io`** — Five continuous-improvement modules (`baseline_manager`, `improvement_recommender`, `knowledge_store_writer`, `ooda_controller`, `retrospective_analyzer`) now delegate file I/O to the shared `_store_io` module (net −216 / +194 lines). Commit `9c031db`.
 - **`install.sh` now installs `templates/`** — Adds the templates tree to `~/.claude/templates/`, marks `check-completeness.py` executable, and runs `manifest.yml --lint` as a post-install sanity check. `install.sh --check` gains a templates drift stanza (file count + lint check). Post-install summary now includes a `Templates: N/N` row.
 - **`uninstall.sh` removes `~/.claude/templates`** — Added to the components list; respected by `--dry-run` and `--yes`.
 - **Path references normalised** — All template paths in `commands/auto-orchestrate.md`, `agents/{orchestrator,researcher,software-engineer,technical-writer}.md`, and `skills/spec-creator/SKILL.md` now use the `_shared/`-style relative form (`templates/orchestrate-session/...`) so they resolve in both dev-tree (`claude-code/templates/...`) and installed-tree (`~/.claude/templates/...`) without rewriting.
@@ -21,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Documentation
 
 - README, ARCHITECTURE, INTEGRATION, CONTRIBUTING, PLAYBOOK, RELEASE-NOTES updated to describe the artifact contract, installer changes, and the new `INCOMPLETE_ARTIFACTS` terminal state.
+- **Architecture / integration reconciliation** — `ARCHITECTURE.md`, `INTEGRATION.md`, and `PERMISSION-MODES.md` updated for current agent count and process catalog; new `agents/agent-reconciliation-notes.md` records the agent-definition ↔ `manifest.json` reconciliation; token-optimization detail expanded in `ARCHITECTURE.md`. Commits `3244164`, `9c031db`.
 
 ## [1.1.0] - 2026-05-16
 
