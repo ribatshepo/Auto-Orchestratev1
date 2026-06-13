@@ -7,10 +7,28 @@
 
 ## Unreleased
 
+_Nothing yet._
+
+---
+
+## v1.2.0 — 2026-06-13
+
+**Changes since**: 2026-05-16 (v1.1.0)
+**Released**: 2026-06-13
+
 ### Headline Features
 
-- **Deterministic per-session artifact contract** — Every `/auto-orchestrate` run now deposits the same file tree under `.orchestrate/<sid>/`. New `claude-code/templates/orchestrate-session/` tree carries `manifest.yml` (100 rules + 3 consistency checks), 18 JSON schemas, ~50 seed templates, and `check-completeness.py`. Constraints `ARTIFACT-CONTRACT-001`, `ARTIFACT-CHECK-001`, `MAIN-016`, `MAIN-017` are now in effect. Empty folders are forbidden — when no rule fires the orchestrator emits a real baseline artifact. All six Stage-6 doc categories (`api`, `integration`, `ops-runbook`, `adr`, `user-guide`, `changelog`) are mandatory. See `CHANGELOG.md` for the full list.
+- **Deterministic per-session artifact contract** — Every `/auto-orchestrate` run now deposits the same file tree under `.orchestrate/<sid>/`. New `claude-code/templates/orchestrate-session/` tree carries `manifest.yml` (145 rules + 7 consistency checks), 18 JSON schemas, ~50 seed templates, and `check-completeness.py`. Constraints `ARTIFACT-CONTRACT-001`, `ARTIFACT-CHECK-001`, `MAIN-016`, `MAIN-017` are now in effect. Empty folders are forbidden — when no rule fires the orchestrator emits a real baseline artifact. All six Stage-6 doc categories (`api`, `integration`, `ops-runbook`, `adr`, `user-guide`, `changelog`) are mandatory. See `CHANGELOG.md` for the full list.
 - **Step 7 — Completeness Check** — A new pre-terminal-state step runs `check-completeness.py` against the session folder. FAIL sets `terminal_state: "INCOMPLETE_ARTIFACTS"` and runs a 3-cycle remediation loop dispatched to the rule-owner agent. Standalone forensic mode: `python3 ~/.claude/templates/orchestrate-session/check-completeness.py --session-root .orchestrate/<sid>`.
+- **`extend.py` — one-command extension scaffolder** — New `claude-code/skills/_shared/python/extend.py` adds a new skill **or** agent in a single pass: it scaffolds the on-disk file, registers the `manifest.json` entry and bumps `stats`, optionally wires a skill to an agent (`--for-agent` / `--skills`), updates the prose docs (`agents/README.md`, `ARCHITECTURE.md`), and validates the manifest (rolling back on failure). Cross-checks that referenced components exist; `--dry-run` previews the full diff. Tests at `skills/_shared/python/tests/test_extend.py`. See `docs/EXTENDING.md`.
+
+### Token & Context Optimizations
+
+- **Checkpoint schema bumped to 1.10.0** with context-diet optimization fields.
+- **Slim subagent-spawn protocol pack** — new `_shared/protocols/agent-preamble.md` + `spawn-core.md` (`PROTOCOL-PACK-SLIM-001`); artifact-envelope **excerpt + excerpt-pointer** support (`CONTEXT-DIET-001`).
+- **`DomainIndexer`** decision-log search (`lib/domain_memory/indexer.py`).
+- **Shared I/O + time modules** — `lib/ci_engine/_store_io.py` consolidates JSON/JSONL I/O; a shared `_time` module replaces 8 local `_utc_now_iso` copies.
+- **`CONSTRAINTS-REGISTRY.md`** documents the constraint-ID families.
 
 ### Operability
 

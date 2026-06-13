@@ -11,13 +11,13 @@ The system enforces strict quality gates, manages context budgets across agent h
 ## Features
 
 - **11-stage hybrid pipeline** — Four planning stages (P1-P4: Intent, Scope, Dependencies, Sprint) followed by seven technical stages (0-6: research, planning, specification, implementation, testing, validation, documentation) with mandatory completion gates and a PRE-RESEARCH-GATE bridging the two phases
-- **18 specialized agents** — 1 pipeline-core (orchestrator), 5 pipeline (researcher, debugger, auditor, session-manager, continuity-scout), and 12 team agents covering the full engineering role hierarchy
+- **22 specialized agents** — 1 pipeline-core (orchestrator), 5 pipeline (researcher, debugger, auditor, session-manager, continuity-scout), 4 continuity source-scouts (scout-jsonl, scout-sessions, scout-pipeline, scout-context), and 12 team agents covering the full engineering role hierarchy
 - **49 task-specific skills** — Testing, security auditing, accessibility checking, documentation, DevOps, Docker validation, refactoring, CI/CD, dependency analysis, debugging diagnostics, spec compliance, cost estimation, observability setup, RAID logging, story generation, threat modeling, ADR publication, release notes, SLO definition, CAB review, OKR retrospectives, dependency-matrix generation, sprint-goal linking, meta-cognitive reasoning, and more
 - **Single user-facing command** — `/auto-orchestrate` is the only command. Audit (Phase 5v), Debug (Phase 5e), Domain analysis (5q/5s/5i/5d), Release (Phase 7), Post-Launch (Phase 8), and Continuous Governance (Phase 9) all run as internal phases of the single autonomous loop
 - **Parallel Stage 3 implementation** — Up to 5 concurrent software-engineers (configurable to 7) when independent stories share no files; hybrid heuristic + explicit-override detection at Stage 1 (PARALLEL-001/002/003 + CHAIN-002 + SE-009)
 - **Token-budget optimization suite** — 6 independently-flagged optimizations cut a typical session from ~2.0M to ~1.1M tokens (~45% reduction): manifest digest, per-stage orchestrator templates, skill frontmatter routing, slim receipts, slim handovers, fired-only process injection. All gated by `checkpoint.optimizations.*` flags; reversible without code change
 - **8 file-polled human gates** — Intent Review, Scope Lock, Dependency Acceptance, Sprint Readiness, Debug Entry, Compliance Verdict, CAB Review (conditional), Release Readiness — each pauses via `gate-pending-<id>.json` and polls for `gate-approval-<id>.json`
-- **Session management with crash recovery** — Checkpoint-based sessions (schema 1.9.0) persist across interruptions and can be resumed
+- **Session management with crash recovery** — Checkpoint-based sessions (schema 1.10.0) persist across interruptions and can be resumed
 - **Zero-error gates and mandatory validation** — Security audits, compliance checks, and technical debt measurement enforced before completion
 - **No-auto-commit policy** — The dev-workflow skill generates conventional commit messages and displays copy-pasteable git commands without executing them automatically
 
@@ -40,11 +40,11 @@ chmod +x install.sh
 
 The install script copies the following into `~/.claude/`:
 
-- `agents/` — 18 agent definition files
+- `agents/` — 22 agent definition files (includes 4 continuity source-scouts)
 - `skills/` — All 49 skill directories
 - `commands/` — Single command (`/auto-orchestrate`)
 - `_shared/` — Protocols, templates, references, and style guides
-- `lib/` — Python helpers (`ci_engine`, `domain_memory`, `artifact_envelope`, `path_compat`)
+- `lib/` — Python helpers (`ci_engine` incl. `_store_io`, `domain_memory` incl. `indexer`, `artifact_envelope`; shared modules `_time.py`, `path_compat.py`)
 - `scripts/` — One-shot utilities (e.g. `migrate_to_unified_orchestrate.py`)
 - `processes/` — Canonical process definitions used by the orchestrator
 - `templates/` — Deterministic session artifact contract: `orchestrate-session/manifest.yml` (the contract anchor), per-stage seed templates, JSON schemas, and `check-completeness.py` (the Step-7 validator). See `claude-code/templates/orchestrate-session/README.md` for the full layout.
@@ -445,8 +445,11 @@ Auto-Orchestrate/
         │   ├── output-standard.md         # Unified file naming/structure
         │   ├── output-schemas.md          # Inter-skill JSON schemas
         │   ├── skill-chain-contracts.md   # Skill chaining rules
-        │   └── skill-chaining-patterns.md # Invocation patterns
+        │   ├── skill-chaining-patterns.md # Invocation patterns
+        │   ├── agent-preamble.md          # Continuity context for every spawn
+        │   └── spawn-core.md              # Slim spawn protocol pack (context-diet)
         ├── references/          # Agent-specific reference docs
+        │   └── CONSTRAINTS-REGISTRY.md    # Canonical constraint-ID families
         ├── schemas/             # JSON schemas (manifest.schema.json)
         ├── templates/           # Skill boilerplate and anti-patterns
         ├── style-guides/        # Documentation style guide
@@ -459,7 +462,7 @@ Three runtime directories are created automatically by the autonomous commands. 
 
 ```
 .orchestrate/<session-id>/       # Created by /auto-orchestrate
-├── checkpoint.json              # Session state (atomic write, schema 1.1.0)
+├── checkpoint.json              # Session state (atomic write, schema 1.10.0)
 ├── MANIFEST.jsonl               # Session-level manifest
 ├── proposed-tasks.json          # Task proposals from orchestrator
 ├── planning/                    # Planning phase artifacts (P1-P4)
@@ -494,6 +497,9 @@ All output files follow `YYYY-MM-DD_<slug>.<ext>` naming (per `_shared/protocols
 - **[PLAYBOOK.md](PLAYBOOK.md)** — Operational playbook: when to use what, scenario walkthroughs, flag cookbook, failure modes, troubleshooting
 - **[ARCHITECTURE.md](claude-code/ARCHITECTURE.md)** — System architecture and constraint matrix
 - **[INTEGRATION.md](claude-code/INTEGRATION.md)** — Integration patterns and workflows
+- **[EXTENDING.md](docs/EXTENDING.md)** — How to add skills/agents, align them in the manifest, and use the `extend.py` scaffolder
+- **[token-budget-analysis.md](docs/token-budget-analysis.md)** — Per-stage token/cost budget analysis
+- **[token-consumption-granularity.md](docs/token-consumption-granularity.md)** — Token tracking granularity and per-stage breakdown
 - **[PERMISSION-MODES.md](claude-code/PERMISSION-MODES.md)** — Permission model documentation
 - **[SECURITY.md](SECURITY.md)** — Security policy and vulnerability reporting
 - **[CHANGELOG.md](CHANGELOG.md)** — Version history and release changes
@@ -503,7 +509,7 @@ All output files follow `YYYY-MM-DD_<slug>.<ext>` naming (per `_shared/protocols
 
 ## Contributing
 
-Contributions are welcome. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide, including dev setup, skill creation, agent modification, testing, code style, and PR process.
+Contributions are welcome. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide, including dev setup, skill creation, agent modification, testing, code style, and PR process. To add a new skill or agent in one step, use the `extend.py` scaffolder (`claude-code/skills/_shared/python/extend.py`) documented in **[docs/EXTENDING.md](docs/EXTENDING.md)** — it scaffolds the file, registers it in the manifest, and updates the related docs in a single command.
 
 Quick start:
 

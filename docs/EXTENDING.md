@@ -29,6 +29,23 @@ if task and task.get("needs_full_manifest") is True:
 
 > **Implication:** if a new agent needs to read `chaining`, `capabilities`, or other agents' full entries at runtime, either add it to that allowlist or set `needs_full_manifest: true` on its task. Otherwise the slim digest is enough.
 
+### The one-step path: `extend.py` (recommended)
+
+`claude-code/skills/_shared/python/extend.py` does everything in §2–§4 in a single command — it scaffolds the on-disk file, adds the manifest entry, bumps `stats`, wires skill→agent, updates the prose docs (`agents/README.md`, `ARCHITECTURE.md`), and runs `validate_manifest.py` before writing (rolling back on failure):
+
+```bash
+# add a skill (optionally wired to an agent)
+python3 claude-code/skills/_shared/python/extend.py skill <name> \
+    --description "…" --triggers "a,b" [--for-agent <agent>] [--scripts] [--references] [--dry-run]
+
+# add an agent
+python3 claude-code/skills/_shared/python/extend.py agent <name> \
+    --model sonnet|opus|haiku --category implementation|coordination|pipeline \
+    --description "…" --triggers "a,b" [--tools "Read,Write,…"] [--skills "a,b"] [--dry-run]
+```
+
+`--dry-run` prints a unified diff of every change without writing. Tests: `skills/_shared/python/tests/test_extend.py`. The manual sections below explain what the scaffolder does under the hood and remain the reference for hand-editing.
+
 ---
 
 ## 2. Adding a new skill
@@ -115,7 +132,7 @@ The skill→agent link is a **field on the agent**, `skills_orchestrated[]` — 
 
 ## 4. Adding a new agent
 
-Agents are **flat Markdown files** in `claude-code/agents/<name>.md` (no per-agent directory). There is currently **no scaffolder** (see §6) — copy an existing agent such as `agents/auditor.md` or `agents/software-engineer.md`.
+Agents are **flat Markdown files** in `claude-code/agents/<name>.md` (no per-agent directory). Use the `extend.py agent` scaffolder (§1 quick path) to generate one in a single command; alternatively, copy an existing agent such as `agents/auditor.md` or `agents/software-engineer.md` and follow the manual steps below.
 
 **Steps:**
 
@@ -180,12 +197,17 @@ Agents are **flat Markdown files** in `claude-code/agents/<name>.md` (no per-age
 
 ## 6. Known gaps & hardening recommendations
 
-The mechanism above makes extension *possible*; these are the gaps that keep it from being *safe* by default. Each is a recommended follow-up, not implemented here:
+The mechanism above makes extension *possible*; this section tracks how *safe* it is by default.
 
-1. **No cross-referential integrity in `validate_manifest.py`.** It checks schema/types/enums only. It will happily accept an agent that orchestrates a non-existent skill, a `path` to a missing file, duplicate `dispatch_triggers`, or `stats` counts that drift from reality. **Recommendation:** extend `skills/_shared/python/validate_manifest.py` with a cross-reference pass (the six manual checks in §5), so a single `validate_manifest.py` run fails fast on a broken extension.
+**Closed (as of 2026-06-13) by `extend.py`:**
 
-2. **Frontmatter `triggers` vs. manifest `dispatch_triggers` drift.** The two sources of truth are maintained by hand and can diverge; the digest builder silently falls back between them, masking the drift. **Recommendation:** add a validator check that the on-disk frontmatter and the manifest entry for each component agree on name and triggers.
+- **Agent scaffolder** — `extend.py agent` now generates `agents/<name>.md` from a template *and* appends the `agents[]` manifest entry with `stats` bumped, making "add an agent" as turnkey as "add a skill." (Formerly a gap: agents were hand-written.)
+- **Write-time cross-referencing** — `extend.py` refuses to wire a skill to a non-existent agent (`--for-agent`) or to register an agent whose `--skills` don't exist, and it runs `validate_manifest.py` (rolling back on failure) before writing. Extensions made *through the scaffolder* can't silently drift.
 
-3. **No agent scaffolder.** Skills have `init_skill.py`; agents are hand-written, which invites missing preamble/constraint sections and manifest entries. **Recommendation:** add an `init_agent.py` (mirroring `skills/skill-creator/scripts/init_skill.py`) that generates `agents/<name>.md` from a template *and* appends a stub `agents[]` manifest entry with `stats` bumped — making "add an agent" as turnkey as "add a skill."
+**Remaining gaps (apply to manual, hand-edited extensions):**
 
-Implementing #1 first yields the most leverage: it turns every future skill/agent addition into a self-checking operation.
+1. **`validate_manifest.py` still has no standalone cross-referential integrity.** It checks schema/types/enums only, so a *manually* edited manifest can still reference a non-existent skill, a `path` to a missing file, duplicate `dispatch_triggers`, or `stats` counts that drift. **Recommendation:** fold `extend.py`'s checks into `validate_manifest.py` as a cross-reference pass (the six manual checks in §5) so any validation run — not just scaffolded ones — fails fast.
+
+2. **Frontmatter `triggers` vs. manifest `dispatch_triggers` drift.** Hand-edited components can diverge between the two sources of truth; the digest builder silently falls back between them, masking the drift. `extend.py` avoids this by generating both from one `--triggers` argument. **Recommendation:** add a validator check that the on-disk frontmatter and the manifest entry agree on name and triggers.
+
+Implementing #1 yields the most leverage: it extends the scaffolder's safety to every extension, scaffolded or hand-edited.

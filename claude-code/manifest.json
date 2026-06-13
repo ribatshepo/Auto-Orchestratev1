@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "name": "plugins-ai-claude-code",
   "description": "Single-command autonomous orchestration framework. /auto-orchestrate runs the canonical end-to-end process (P-001..P-093) as internal phases — planning gates, execution stages, domain phases (qa/security/infra/data-ml), validation+audit, debug, release prep, post-launch, continuous governance — with no human gates and no sibling commands.",
-  "updated_at": "2026-05-16",
+  "updated_at": "2026-06-13",
   "stats": {
     "total_skills": 49,
     "total_agents": 22,

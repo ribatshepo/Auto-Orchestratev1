@@ -145,7 +145,20 @@ claude-code/skills/<skill-name>/
     └── my_script.py
 ```
 
-### Step-by-step
+### Quick path: `extend.py` (recommended)
+
+For a one-step scaffold that registers the skill, bumps `stats`, optionally wires it to an agent, updates the prose docs, and validates the manifest before writing:
+
+```bash
+python3 claude-code/skills/_shared/python/extend.py skill <name> \
+  --description "Short description" \
+  --triggers "trigger phrase 1,trigger phrase 2" \
+  [--for-agent AGENT] [--scripts] [--references] [--dry-run]
+```
+
+`--dry-run` previews every file change without writing. The manual steps below document what the scaffolder does under the hood (and remain valid for hand-editing).
+
+### Step-by-step (manual workflow)
 
 1. **Copy the boilerplate** from `claude-code/_shared/templates/skill-boilerplate.md` as a starting point for `SKILL.md`.
 
@@ -229,9 +242,20 @@ If you discover at runtime that a field you needed isn't in the digest, your age
 
 ### Adding a new agent
 
+**Quick path (recommended):** use the `extend.py agent` scaffolder, which creates the file, registers the manifest entry, bumps `stats.total_agents`, updates `agents/README.md` + `ARCHITECTURE.md`, and validates before writing:
+
+```bash
+python3 claude-code/skills/_shared/python/extend.py agent <name> \
+  --model sonnet --category implementation|coordination|pipeline \
+  --description "One-line purpose" --triggers "phrase 1,phrase 2" \
+  [--tools "Read,Write,Edit,..."] [--skills "skill-a,skill-b"] [--dry-run]
+```
+
+It cross-checks that any `--skills` already exist. `--dry-run` previews the diff. The manual steps below document the same work for hand-editing:
+
 1. Create `claude-code/agents/<agent-name>.md` following the structure of an existing agent.
-2. Add the agent entry to `manifest.json` under `"agents"`.
-3. Update `ARCHITECTURE.md` to document the new agent's role.
+2. Add the agent entry to `manifest.json` under `"agents"` and bump `stats.total_agents`.
+3. Update `ARCHITECTURE.md` (and `agents/README.md`) to document the new agent's role.
 4. **Decide manifest digest eligibility**: if your agent only routes work (reads `dispatch_triggers`), the digest is sufficient. If it consumes chaining metadata or activation rules, add it to the `needs_full_manifest()` allowlist.
 5. Re-install: `./install.sh`
 

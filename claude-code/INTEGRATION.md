@@ -1,6 +1,6 @@
 # Auto-Orchestrate Integration Guide
 
-**Last Updated**: 2026-05-18
+**Last Updated**: 2026-06-13
 **Scope**: how to install, configure, run, extend, and troubleshoot the Auto-Orchestrate pipeline. Companion to `ARCHITECTURE.md` (which documents the pipeline's internals); this file documents the boundaries — installation, configuration, surrounding tools, extension points, troubleshooting.
 
 ---
@@ -207,17 +207,18 @@ After `./install.sh` succeeds, `~/.claude/` looks like this:
 │   │   └── task-system-integration.md
 │   ├── references/                  (… + CONSTRAINTS-REGISTRY.md, TOOL-AVAILABILITY.md)
 │   └── …
-├── lib/                           ← 3 Python packages + 2 single-file modules
-│   ├── artifact_envelope/          (envelope schemas + validator; optional excerpt digest)
-│   ├── ci_engine/                  (within-run OODA + cross-run PDCA loops)
+├── lib/                           ← 3 Python packages + 3 single-file modules
+│   ├── artifact_envelope/          (envelope schemas + validator; excerpt + excerpt-pointer digest)
+│   ├── ci_engine/                  (within-run OODA + cross-run PDCA loops; _store_io.py JSON/JSONL I/O)
 │   ├── domain_memory/              (persistence + DomainIndexer FTS query, DOMAIN-QUERY-001)
-│   ├── _time.py                    (shared UTC timestamp helpers)
+│   ├── _time.py                    (shared UTC timestamp helpers; used by 8 modules)
+│   ├── _store_io.py                (consolidated JSON/JSONL I/O for the CI engine)
 │   └── path_compat.py              (legacy-root resolver during migration)
 ├── scripts/                       ← migration + helper scripts
 ├── processes/                     ← P-001 .. P-093 catalog + injection map
 └── templates/                     ← session artifact contract + validator
     └── orchestrate-session/
-        ├── manifest.yml            (100 rules)
+        ├── manifest.yml            (145 rules + 7 consistency checks)
         ├── check-completeness.py   (the validator)
         ├── README.md
         ├── schemas/                (18 JSON schemas)
@@ -242,17 +243,17 @@ After install, run these checks (or `./install.sh --check` does most of them aut
 ### 4.1 Component counts
 
 ```bash
-ls ~/.claude/agents/*.md   | wc -l   # 18
+ls ~/.claude/agents/*.md   | wc -l   # 22
 ls -d ~/.claude/skills/*/  | wc -l   # 49 (+ _shared)
 ls ~/.claude/commands/*.md | wc -l   # 1 (auto-orchestrate.md)
-ls ~/.claude/_shared/protocols/*.md | wc -l   # 12
+ls ~/.claude/_shared/protocols/*.md | wc -l   # 13
 ```
 
 ### 4.2 Manifest registry valid
 
 ```bash
 python3 -c "import json; m=json.load(open('$HOME/.claude/manifest.json')); print('agents:', len(m['agents']), 'skills:', len(m['skills']))"
-# Expected: agents: 18 skills: 49
+# Expected: agents: 22 skills: 49
 ```
 
 ### 4.3 Artifact contract lint
@@ -498,6 +499,22 @@ The `references/` field in skill memory (see `/remember`) is the canonical way t
 
 ## 9. Extending the pipeline
 
+> **Turnkey path (recommended):** for adding a skill or agent, use the
+> `extend.py` scaffolder instead of the manual steps below — it scaffolds the
+> file, adds the manifest entry, bumps `stats`, wires skill→agent, updates the
+> prose docs (`agents/README.md`, `ARCHITECTURE.md`), and validates the manifest
+> before writing (with `--dry-run` to preview):
+>
+> ```bash
+> python3 claude-code/skills/_shared/python/extend.py agent <name> \
+>     --model sonnet --category pipeline --description "…" --dry-run
+> python3 claude-code/skills/_shared/python/extend.py skill <name> \
+>     --description "…" --triggers "a,b" --for-agent <agent> --dry-run
+> ```
+>
+> The manual steps below document what the scaffolder does under the hood and
+> remain valid for hand-editing. See `docs/EXTENDING.md` for the full guide.
+
 ### 9.1 Add a new agent
 
 1. Create `claude-code/agents/<name>.md` with frontmatter:
@@ -527,9 +544,12 @@ The `references/` field in skill memory (see `/remember`) is the canonical way t
    ```json
    {
      "name": "<name>",
-     "file": "agents/<name>.md",
-     "purpose": "<one-line>",
-     "tools": ["Read", "Bash", "..."]
+     "description": "<one-line purpose>",
+     "model": "sonnet",
+     "tools": ["Read", "Bash", "..."],
+     "dispatch_triggers": ["<keyword phrase>"],
+     "capabilities": {},
+     "path": "agents/<name>.md"
    }
    ```
 4. If the agent should fire on stage-close domain activation, add an `activation_rules:` entry under `manifest.agents[<name>]` (see `_shared/protocols/agent-activation.md` for ACT-001..012 format).
@@ -537,13 +557,13 @@ The `references/` field in skill memory (see `/remember`) is the canonical way t
 
 ### 9.2 Add a new skill
 
-Use the `skill-creator` skill:
+Use the `extend.py skill <name>` scaffolder (above) for a one-step add, or the `skill-creator` skill for an interactive walkthrough:
 
 ```
 /skill-creator "I want a skill that <does X>"
 ```
 
-It scaffolds `claude-code/skills/<name>/SKILL.md` with the right frontmatter, optional `scripts/` directory for Python helpers, and updates `manifest.json`. Manual structure:
+Either scaffolds `claude-code/skills/<name>/SKILL.md` with the right frontmatter, optional `scripts/` directory for Python helpers, and (with `extend.py`) updates `manifest.json` + `stats`. Manual structure:
 
 ```
 claude-code/skills/<name>/

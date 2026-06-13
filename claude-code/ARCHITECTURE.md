@@ -33,10 +33,10 @@ Pipeline:
   49 skills                     (per claude-code/manifest.json)
   28 process files              (manifest entries; cover the P-001 .. P-093 process catalog)
   13 shared protocols           (claude-code/_shared/protocols/*.md — includes spawn-core.md)
-  3 lib packages + 2 modules    (artifact_envelope/, ci_engine/, domain_memory/; path_compat.py + _time.py)
+  3 lib packages + 3 modules    (artifact_envelope/, ci_engine/ incl. _store_io.py, domain_memory/ incl. indexer.py; _time.py + path_compat.py + _store_io.py)
 
 Artifact contract:
-  100 artifact rules            (templates/orchestrate-session/manifest.yml)
+  145 artifact rules            (templates/orchestrate-session/manifest.yml)
   7 consistency checks          (CONS-001..007 in check-completeness.py)
   ~87 templates + 18 schemas    (templates/orchestrate-session/)
 
@@ -47,7 +47,7 @@ Pre-flight ratio (PREFLIGHT-001):
   11/11 critical skills          (spec-creator, validator, codebase-stats, refactor-analyzer,
                                   dependency-analyzer, production-code-workflow, dev-workflow,
                                   spec-compliance, docs-lookup, docs-write, meta-reasoner)
-  Remaining 7 agents + 38 skills are lazy-dispatched by the orchestrator at spawn time.
+  Remaining 11 agents + 38 skills are lazy-dispatched by the orchestrator at spawn time.
 
 Checkpoint schema: 1.10.0
 ```

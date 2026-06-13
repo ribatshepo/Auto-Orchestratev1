@@ -6,7 +6,7 @@ Claude Code operates in different permission modes that affect tool availability
 
 **Gap Status**: GAP-MED-002 MEDIUM
 **Created**: 2026-02-11 (Iteration 2 remediation)
-**Last updated**: 2026-05-16 — synced with autonomous reasoning gates (REASONING-GATE-001), baked-in engineering standards, artifact envelope, parallel stage behavior matrix, and the v1.1 triage routing redesign (planning P1–P4 mandatory for all tiers; `--skip-planning` is the only flag-based bypass).
+**Last updated**: 2026-06-13 — v1.2.0 adds the deterministic per-session artifact contract, the slim subagent-spawn protocol pack (`spawn-core.md`/`agent-preamble.md`), checkpoint schema 1.10.0, and the `extend.py` scaffolder. Prior 2026-05-16 sync: autonomous reasoning gates (REASONING-GATE-001), baked-in engineering standards, artifact envelope, parallel stage behavior matrix, and the v1.1 triage routing redesign (planning P1–P4 mandatory for all tiers; `--skip-planning` is the only flag-based bypass).
 **Purpose**: Document agent/skill behavior across permission modes to enable fully autonomous operation
 
 ## Permission Modes
